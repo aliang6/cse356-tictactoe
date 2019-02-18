@@ -1,3 +1,8 @@
+html{
+  margin: 0px;
+  padding: 0px;
+}
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -5,4 +10,36 @@ body {
 
 a {
   color: #00B7FF;
+}
+
+.board {
+  border-spacing: 0px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.cell {
+  display: flex;
+  height: 100px;
+  width: 100px;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border: 1px solid black;
+}
+
+.cell:hover {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.char {
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }

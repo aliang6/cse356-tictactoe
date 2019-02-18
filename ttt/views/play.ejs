@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div class="greeting">
+        <h1><%= title %></h1>
+        <h2>Hello <%= name %>, <%= date %></h2>
+    </div>
+    <div class="board">
+        <div class="row">
+            <div class="cell">
+                <h2 class="char">X</h2>
+            </div>
+            <div class="cell">
+                <h2 class="char">X</h2>
+            </div>
+            <div class="cell">
+                <h2 class="char">X</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell">
+                <h2 class="char">X</h2>
+            </div>
+            <div class="cell">
+                <h2 class="char">X</h2>
+            </div>
+            <div class="cell">
+                <h2 class="char">X</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell">
+                <h2 class="char">X</h2>
+            </div>
+            <div class="cell">
+                <h2 class="char">X</h2>
+            </div>
+            <div class="cell">
+                <h2 class="char">X</h2>
+            </div>
+        </div>
+    </div>
+    <h1>Winner: <%= winner %></h1>
+
+    <script src="/javascripts/play.js"></script>
+  </body>
+</html>
