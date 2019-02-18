@@ -83,26 +83,43 @@
                 });
                 console.log(grid);
                 
-                var json = {'grid': grid};
-                $.post("/ttt/play", json, function(data) {
-                    console.log(data);
-                    var winner = '';
-                    var win = data.winner;
-                    if(win === 'X'){
-                        winner = "X Won";
-                    } else if (win === 'O') {
-                        winner = "O Won";
-                    } else if (win === ' ') {
-                        winner = "Tie"
+                var json = JSON.stringify({grid: grid});
+                $.ajax({
+                    url: "/ttt/play",
+                    type: "POST",
+                    data: json,
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function(resp){
+                        var winner = '';
+                        var win = resp.winner;
+                        if(win === 'X'){
+                            winner = "X Won";
+                        } else if (win === 'O') {
+                            winner = "O Won";
+                        } else if (win === ' ') {
+                            winner = "Tie"
+                        }
+                        $("#winner").text(winner);
+                        
+                        var grid = resp.grid;
+                        var i = 0;
+                        $('.char').each(function() {
+                            $(this).text(grid[i]);
+                            i++;
+                        });
                     }
-                    $("#winner").text(winner);
-                    var grid = data.grid;
-                    var i = 0;
-                    $('.char').each(function() {
-                        $(this).text(grid[i]);
-                        i++;
-                    });
-                }, json);
+                });
+                // $.post("/ttt/play", json, function(data) {
+                //     console.log(data);
+                //     $("#winner").text(data.winner);
+                //     var grid = data.grid;
+                //     var i = 0;
+                //     $('.char').each(function() {
+                //         $(this).text(grid[i]);
+                //         i++;
+                //     });
+                // });
             }
         });
     </script>

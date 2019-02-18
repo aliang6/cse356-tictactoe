@@ -36,7 +36,7 @@ router.post('/ttt', function(req, res) { // Configure the link then redirect to 
 router.post('/ttt/play', function(req, res, next) {
   console.log("post request received");
   console.log(req.body);
-  grid = req.body['grid[]'];
+  grid = req.body.grid;
   let board = gbModule.GameBoard.fromJSON(grid);
   console.log(grid);
   if (board != null)
