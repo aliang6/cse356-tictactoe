@@ -87,7 +87,8 @@ class GameBoard {
     }
 
     toJSON(){
-        var dict = {BOARD_JSON_KEY: []};
+        var dict = {};
+        dict[BOARD_JSON_KEY] = [];
         for (var i = 0; i < BOARD_SIZE; i++){
             var val = (this.board[i] == Box.EMPTY) ? ' ' : ((this.board[i] == Box.X) ? 'X' : 'O');
             dict[BOARD_JSON_KEY].push(val);
@@ -111,3 +112,8 @@ GameBoard.prototype.toString = function GameBoardToString(){
     }
     return boardStr;
 }
+
+module.exports.GameBoard = GameBoard;
+module.exports.Box = Box;
+module.exports.BOARD_SIZE = BOARD_SIZE;
+module.exports.BOARD_JSON_KEY = BOARD_JSON_KEY;

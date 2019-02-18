@@ -118,6 +118,8 @@ class GameTree {
         var node = this.findNode(board);
         if (node == null)
             return null;
+        if (node.isEnd)
+            return node;
         if (!node.isEnd && node.currentTurn == AI_TURN){
             var playerMovePos = this.checkDoubleTrap(board);
             if (playerMovePos.length == 2){
@@ -141,14 +143,14 @@ class GameTree {
             }
 
             // arrays that hold only win and lose probs
-            var winProbs = new [];
-            var loseProbs = new [];
+            var winProbs = [];
+            var loseProbs = [];
 
             // an array of the indices of the non-null elements in the cursor's config
             var nonNullChildren = [];
 
             // fill up the arrays accordingly
-            for (var i = 0; i < node.config.length; i++){
+            for (var i in node.config){
                 if (node.config[i] instanceof GameBoardNode){
                     nonNullChildren.push(i);
                 }
@@ -161,7 +163,7 @@ class GameTree {
             var smallestWinChance = 1.0;
             var highestLoseChanceIndex = -1;
             var highestLoseChance = 0.0;
-            for (var i = 0; i < nonNullChildrenSize; i++){
+            for (var i = 0; i < nonNullChildren.length; i++){
                 if (winProbs[nonNullChildren[i]] < smallestWinChance){
                     smallestWinChance = winProbs[nonNullChildren[i]];
                     smallestWinChanceIndex = i;
@@ -189,12 +191,12 @@ class GameTree {
                 }
             }
             if (sameProbs.length > 0){
-                return makeMove(board, sameProbs[(int)(Math.random()*sameProbsLen)]);
+                return this.makeMove(board, sameProbs[parseInt(Math.random()*sameProbs.length)]);
             }
 
             // if smallest win chance occurs only once, go to that child
             if (smallestWinChanceRep == 1 || (smallestWinChance == 0.0 && loseProbs[nonNullChildren[smallestWinChanceIndex]] == 1.0))
-                return makeMove(board, nonNullChildren[smallestWinChanceIndex]);
+                return this.makeMove(board, nonNullChildren[smallestWinChanceIndex]);
             else {
                 // else go to the child with the smallest win chance and highest lose chance
                 var smallestWHighestLChanceIndex = nonNullChildren[smallestWinChanceIndex];
@@ -206,7 +208,7 @@ class GameTree {
                         smallestWHighestLChance = loseProbs[indicesOfWinChance[i]];
                     }
                 }
-                return makeMove(board, smallestWHighestLChanceIndex);
+                return this.makeMove(board, smallestWHighestLChanceIndex);
             }
         }
         else {
@@ -215,3 +217,6 @@ class GameTree {
     }
 
 }
+
+module.exports.PLAYERS_TURN = PLAYERS_TURN;
+module.exports.AI_TURN = AI_TURN;

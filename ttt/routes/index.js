@@ -5,6 +5,14 @@ var playerName = "-1";
 var winner = "n";
 var grid = "        O";
 
+var gbModule = require('./GameBoard');
+var gbnModule = require('./GameBoardNode');
+var gtModule = require('./GameTree');
+
+var tree = new gtModule.GameTree();
+tree.buildTree(gtModule.PLAYERS_TURN);
+
+
 /* GET default page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -29,9 +37,13 @@ router.post('/ttt/play', function(req, res, next) {
   console.log("post request received");
   console.log(req.body);
   grid = req.body.grid;
-  var winner = req.body.winner;
-  return res.send({grid: grid, winner: winner});
-  res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
+  let node = tree.findNode(grid);
+  if (node == null){
+    return res.send({grid: grid, winner: ""});
+  }
+  let nextNode = tree.AIPlayGame(grid);
+  return res.send(nextNode.toJSON());
+  //res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
   
 });
 

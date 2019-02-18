@@ -254,8 +254,8 @@ class GameBoardNode {
     toJSON(){
         var dict = this.board.toJSON();
         var val = '';
-        if (winner != null){
-            switch (winner){
+        if (this.winner != null){
+            switch (this.winner){
                 case Box.X:
                     val = 'X';
                     break;
@@ -275,3 +275,9 @@ class GameBoardNode {
 GameBoardNode.prototype.toString = function GameBoardNodeToString(){
     return this.board.toString();
 }
+
+exports.module.WIN_INDEX = WIN_INDEX;
+exports.module.DRAW_INDEX = DRAW_INDEX;
+exports.module.LOSE_INDEX = LOSE_INDEX;
+exports.module.CONFIG_LEN = CONFIG_LEN;
+exports.module.WINNER_JSON_KEY = WINNER_JSON_KEY;
