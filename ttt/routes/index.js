@@ -12,6 +12,7 @@ router.get('/', function(req, res, next) {
 
 /* GET name page. */
 router.get('/ttt', function(req, res, next) {
+  grid = "         ";
   res.render('index', { title: 'Tic-tac-toe' });
 });
 

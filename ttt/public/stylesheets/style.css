@@ -17,10 +17,13 @@ a {
   display: flex;
   justify-content: center;
   align-content: center;
+  flex-direction: column;
 }
 
 .row {
+  display: flex;
   flex-direction: row;
+  justify-content: center;
 }
 
 .cell {
@@ -29,7 +32,6 @@ a {
   width: 100px;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
   border: 1px solid black;
 }
 
