@@ -3,7 +3,7 @@ var router = express.Router();
 
 var playerName = "-1";
 var winner = "n";
-var grid = "        O";
+var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
 var gbModule = require('../game/GameBoard');
 var gbnModule = require('../game/GameBoardNode');
@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
 
 /* GET name page. */
 router.get('/ttt', function(req, res, next) {
-  grid = "         ";
+  grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
   res.render('index', { title: 'Tic-tac-toe' });
 });
 
@@ -36,13 +36,18 @@ router.post('/ttt', function(req, res) { // Configure the link then redirect to 
 router.post('/ttt/play', function(req, res, next) {
   console.log("post request received");
   console.log(req.body);
-  grid = req.body.grid;
-  let node = tree.findNode(grid);
-  if (node == null){
-    return res.send({grid: grid, winner: ""});
+  grid = req.body['grid[]'];
+  let board = gbModule.GameBoard.fromJSON(grid);
+  console.log(grid);
+  if (board != null)
+    console.log(board.toString());
+  if (board == null ){
+    return res.json({"grid": grid, "winner": ""});
   }
-  let nextNode = tree.AIPlayGame(grid);
-  return res.send(nextNode.toJSON());
+  let nextNode = tree.AIPlayGame(board);
+  console.log("made move");
+  console.log(nextNode.toJSON());
+  return res.json(nextNode.toJSON());
   //res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
   
 });

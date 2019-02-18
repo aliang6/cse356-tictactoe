@@ -12,13 +12,13 @@
     <div class="board">
         <div class="row">
             <div class="cell">
-                <h2 class="char">A</h2>
+                <h2 class="char"><%= grid[0] %></h2>
             </div>
             <div class="cell">
-                <h2 class="char">B</h2>
+                <h2 class="char"><%= grid[1] %></h2>
             </div>
             <div class="cell">
-                <h2 class="char">C</h2>
+                <h2 class="char"><%= grid[2] %></h2>
             </div>
         </div>
         <div class="row">
@@ -29,7 +29,7 @@
                 <h2 class="char"><%= grid[4] %></h2>
             </div>
             <div class="cell">
-                <h2 class="char">F</h2>
+                <h2 class="char"><%= grid[5] %></h2>
             </div>
         </div>
         <div class="row">
@@ -76,14 +76,14 @@
             var cellState = $(this).find('h2').text();
             if(cellState !== "X" && cellState !== "O"){
                 $(this).find('h2').text("X");
-                var grid = "";
+                var grid = [];
                 var winner = $("#winner").text();
                 $('.char').each(function() {
-                    grid += $(this).text();
+                    grid.push($(this).text());
                 });
                 console.log(grid);
                 
-                var json = {grid: grid, winner: winner};
+                var json = {'grid': grid};
                 $.post("/ttt/play", json, function(data) {
                     console.log(data);
                     $("#winner").text(data.winner);

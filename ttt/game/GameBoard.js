@@ -97,6 +97,17 @@ class GameBoard {
         }
         return dict;
     }
+    
+    static fromJSON(grid){
+        if (!Array.isArray(grid) || grid.length != BOARD_SIZE)
+            return null;
+        var board = new GameBoard();
+        for (var i in board.board){
+            var val = (grid[i] == ' ') ? Box.EMPTY : ((grid[i] == 'X') ? Box.X : Box.O);
+            board.setMove(i, val);
+        }
+        return board;
+    }
 
 }
 

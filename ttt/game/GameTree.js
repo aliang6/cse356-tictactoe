@@ -1,10 +1,16 @@
 exports.id = 'game/GameTree';
-var Box = require('./GameBoard').Box;
-var GameBoard = require('./GameBoard').GameBoard;
-var GameBoardNode = require('./GameBoardNode').GameBoardNode;
+var gbModule = require('./GameBoard');
+var gbnModule = require('./GameBoardNode');
+var Box = gbModule.Box;
+var GameBoard = gbModule.GameBoard;
+var GameBoardNode = gbnModule.GameBoardNode;
+
 
 const PLAYERS_TURN = Box.X;
 const AI_TURN = Box.O;
+const WIN_INDEX = gbnModule.WIN_INDEX;
+const DRAW_INDEX = gbnModule.DRAW_INDEX;
+const LOSE_INDEX = gbnModule.LOSE_INDEX;
 
 class GameTree {
 
@@ -25,12 +31,13 @@ class GameTree {
     }
 
     findNode(board){
+        if (board == null)
+            return null;
         var node = (this.dict[board.cacheID] === undefined) ? null : this.dict[board.cacheID];
         return node;
     }
 
-    makeMove(board, position){
-        var node = this.findNode(board);
+    makeMove(node, position){
         var currentBoard = node.board;
 
         if (!currentBoard.checkSpot(position))
@@ -41,9 +48,7 @@ class GameTree {
         return nextNode;
     }
 
-    checkDoubleTrap(board){
-        var node = this.findNode(board);
-        var numPlayerMoves = node.numPlayerMoves;
+    checkDoubleTrap(node){
         var playerMovePos = [];
         for (var i = 0; i < node.board.board.length; i++){
             if (node.board.board[i] == PLAYERS_TURN){
@@ -56,7 +61,7 @@ class GameTree {
     buildTree(turn, root){
         // builds the tree starting from root and the current turn
         root = (root == null) ? this.root : root;
-        var found = !(this.dict[root.cacheID] == undefined);
+        var found = (this.dict[root.cacheID] != undefined);
         if (!found){
             this.dict[root.cacheID] = root;
         }
@@ -64,14 +69,20 @@ class GameTree {
             return;
         else {
             // only build this branch of the tree if we haven't built it yet
-            if (!found){
-                root.buildConfig();
-                var nextTurn = ((turn == PLAYERS_TURN) ? AI_TURN : PLAYERS_TURN);
-                for (var child in root.config){
-                    this.buildTree(nextTurn,root.config[child]);
-                }
-                return;    
+            // if (!found){
+            //     root.buildConfig();
+            //     var nextTurn = ((turn == PLAYERS_TURN) ? AI_TURN : PLAYERS_TURN);
+            //     for (var child in root.config){
+            //         this.buildTree(nextTurn,root.config[child]);
+            //     }
+            //     return;    
+            // }
+            root.buildConfig();
+            var nextTurn = ((turn == PLAYERS_TURN) ? AI_TURN : PLAYERS_TURN);
+            for (var child in root.config){
+                this.buildTree(nextTurn,root.config[child]);
             }
+            return;  
         }
     }
 
@@ -111,8 +122,7 @@ class GameTree {
         return indices;
     }
 
-    checkLegalBoard(board){
-        var node = this.findNode(board);
+    isLegalBoard(node){
         var numPlayerMoves = node.board.numPlayerMoves(PLAYERS_TURN);
         var numMoves = node.board.numMoves;
         var numAIMoves = numMoves - numPlayerMoves;
@@ -121,28 +131,30 @@ class GameTree {
 
     AIPlayGame(board){
         var node = this.findNode(board);
+        if (!this.isLegalBoard(node))
+            return null;
         if (node == null)
             return null;
         if (node.isEnd)
             return node;
         if (!node.isEnd && node.currentTurn == AI_TURN){
-            var playerMovePos = this.checkDoubleTrap(board);
+            var playerMovePos = this.checkDoubleTrap(node);
             if (playerMovePos.length == 2){
                 // check for double trap
                 if (playerMovePos[0] == 0 && playerMovePos[1] == 8 && node.board.board[1] == Box.EMPTY) {
-                    return this.makeMove(board, 1);
+                    return this.makeMove(node, 1);
                 }
                 if (playerMovePos[0] == 2 && playerMovePos[1] == 6 && node.board.board[7] == Box.EMPTY) {
-                    return this.makeMove(board, 7);
+                    return this.makeMove(node, 7);
                 }
                 if (playerMovePos[0] == 4 || playerMovePos[1] == 4){
                     if (playerMovePos[0] == 4){
                         if (node.board.board[playerMovePos[0] - (playerMovePos[1] - playerMovePos[0])] == Box.EMPTY) {
-                            return this.makeMove(board, playerMovePos[0] - (playerMovePos[1] - playerMovePos[0]));
+                            return this.makeMove(node, playerMovePos[0] - (playerMovePos[1] - playerMovePos[0]));
                         }
                     }
                     else if (node.board.board[playerMovePos[1] + (playerMovePos[1] - playerMovePos[0])] == Box.EMPTY) {
-                        return this.makeMove(board, playerMovePos[1] + (playerMovePos[1] - playerMovePos[0]));
+                        return this.makeMove(node, playerMovePos[1] + (playerMovePos[1] - playerMovePos[0]));
                     }
                 }
             }
@@ -156,6 +168,7 @@ class GameTree {
 
             // fill up the arrays accordingly
             for (var i in node.config){
+                node.config[i].calcProbs();
                 if (node.config[i] instanceof GameBoardNode){
                     nonNullChildren.push(i);
                 }
@@ -182,7 +195,7 @@ class GameTree {
             // find the number of times each one occurs
             var smallestWinChanceRep = GameTree.findOccurrences(smallestWinChance, winProbs);
             var highestLoseChanceRep = GameTree.findOccurrences(highestLoseChance, loseProbs);
-        
+
             // if there are multiple nodes with the same probabilities, move to a random one
             var multiple = false;
             var sameWinProbs = GameTree.findOccurrencesPositions(smallestWinChance,winProbs);
@@ -195,13 +208,14 @@ class GameTree {
                     }
                 }
             }
+            
             if (sameProbs.length > 0){
-                return this.makeMove(board, sameProbs[parseInt(Math.random()*sameProbs.length)]);
+                return this.makeMove(node, sameProbs[parseInt(Math.random()*sameProbs.length)]);
             }
 
             // if smallest win chance occurs only once, go to that child
             if (smallestWinChanceRep == 1 || (smallestWinChance == 0.0 && loseProbs[nonNullChildren[smallestWinChanceIndex]] == 1.0))
-                return this.makeMove(board, nonNullChildren[smallestWinChanceIndex]);
+                return this.makeMove(node, nonNullChildren[smallestWinChanceIndex]);
             else {
                 // else go to the child with the smallest win chance and highest lose chance
                 var smallestWHighestLChanceIndex = nonNullChildren[smallestWinChanceIndex];
@@ -213,7 +227,7 @@ class GameTree {
                         smallestWHighestLChance = loseProbs[indicesOfWinChance[i]];
                     }
                 }
-                return this.makeMove(board, smallestWHighestLChanceIndex);
+                return this.makeMove(node, smallestWHighestLChanceIndex);
             }
         }
         else {
@@ -222,6 +236,7 @@ class GameTree {
     }
 
 }
+
 
 module.exports.GameTree = GameTree;
 module.exports.PLAYERS_TURN = PLAYERS_TURN;

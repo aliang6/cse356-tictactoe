@@ -139,11 +139,11 @@ class GameBoardNode {
     }
 
     numLeaves(node, winL, drawL, loseL){
-        winL = (winL === undefined) ? 0 : winL;
-        drawL = (drawL === undefined) ? 0 : drawL;
-        loseL = (loseL === undefined) ? 0 : loseL;
+        winL = (winL == undefined) ? 0 : winL;
+        drawL = (drawL == undefined) ? 0 : drawL;
+        loseL = (loseL == undefined) ? 0 : loseL;
         var leaves = [];
-        for (var i = 0; i < 2; i++){
+        for (var i = 0; i <= 2; i++){
             if (i == WIN_INDEX)
                 leaves.push(winL);
             else if (i == DRAW_INDEX)
@@ -178,6 +178,7 @@ class GameBoardNode {
     calcProbs(){
         // get the total # of leaves of each type
         var leaves = this.numLeaves(this);
+        // console.log("leaves " + leaves);
         var winLeaves = leaves[WIN_INDEX];
         var drawLeaves = leaves[DRAW_INDEX];
         var loseLeaves = leaves[LOSE_INDEX];
