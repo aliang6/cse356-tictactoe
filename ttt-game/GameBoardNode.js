@@ -22,6 +22,7 @@ class GameBoardNode {
         if (currentTurn == Box.EMPTY || board == null)
             throw "GameBoardNode was constructed with illegal parameters.";
         this.board = board;
+        this.isEnd = false;
         this.currentTurn = currentTurn;
         this.config = [];
         this.winner = null;
@@ -30,48 +31,86 @@ class GameBoardNode {
         this.loseProb = 0.0;
         this.drawProb = 0.0;
         this.parent = (parent === undefined) ? null : parent;
-        this.isEnd = false;
-        checkWinner();
     }
 
     get board(){
-        return this.board;
+        return this.boardState;
+    }
+
+    set board(boardState){
+        this.boardState = boardState;
     }
 
     get isEnd(){
-        return this.isEnd;
+        return this.isEndVal;
+    }
+
+    set isEnd(isEnd){
+        this.isEndVal = isEnd;
     }
 
     get currentTurn(){
-        return this.currentTurn;
+        return this.currentTurnVal;
+    }
+
+    set currentTurn(currentTurn){
+        this.currentTurnVal = currentTurn;
     }
 
     get winner(){
-        return this.winner;
+        return this.winnerVal;
+    }
+
+    set winner(winner){
+        this.winnerVal = winner;
     }
 
     get config(){
-        return this.config;
+        return this.configVal;
+    }
+
+    set config(config){
+        this.configVal = config;
     }
 
     get winProb(){
-        return this.winProb;
+        return this.winProbVal;
+    }
+    
+    set winProb(winProb){
+        this.winProbVal = winProb;
     }
 
     get loseProb(){
-        return this.loseProb;
+        return this.loseProbVal;
+    }
+    
+    set loseProb(loseProb){
+        this.loseProbVal = loseProb;
     }
 
     get drawProb(){
-        return this.drawProb;
+        return this.drawProbVal;
+    }
+
+    set drawProb(drawProb){
+        this.drawProbVal = drawProb;
     }
 
     get probs(){
-        return this.probs;
+        return this.probsVal;
+    }
+
+    set probs(probs){
+        this.probsVal = probs;
     }
 
     get parent(){
-        return this.parent;
+        return this.parentVal;
+    }
+
+    set parent(parent){
+        this.parentVal = parent;
     }
 
     get numChildren(){
@@ -86,24 +125,14 @@ class GameBoardNode {
     }
 
     get numMoves(){
-        var numMoves = 0;
-        for (var i = 0; i < this.board.board.length; i++){
-            if (board.board[i] != Box.EMPTY)
-                numMoves++;
-        }
-        return numMoves;
+        return this.board.numMoves;
     }
 
     get numPlayerMoves(){
-        var numPlayerMoves = 0;
-        for (var i = 0; i < board.board.length; i++){
-            if (board.board[i] == Box.X)
-                numPlayerMoves++;
-        }
-        return numPlayerMoves;
+        return this.board.numPlayerMoves(Box.X);
     }
 
-    get numLeaves(node, winL, drawL, loseL){
+    numLeaves(node, winL, drawL, loseL){
         winL = (winL === undefined) ? 0 : winL;
         drawL = (drawL === undefined) ? 0 : drawL;
         loseL = (loseL === undefined) ? 0 : loseL;
@@ -127,7 +156,7 @@ class GameBoardNode {
                 leaves[LOSE_INDEX] += 1;
         }
         else {
-            for (var i = 0; i < node.config().length; i++){
+            for (var i = 0; i < node.config.length; i++){
                 var child = node.config[i];
                 if (child instanceof GameBoardNode){
                     var childLeaves = child.numLeaves(child,winL,drawL,loseL);
@@ -140,12 +169,12 @@ class GameBoardNode {
         return leaves;
     }
 
-    set probs(){
+    calcProbs(){
         // get the total # of leaves of each type
-        var leaves = numLeaves(this);
-        this.winLeaves = leaves[WIN_INDEX];
-        this.drawLeaves = leaves[DRAW_INDEX];
-        this.loseLeaves = leaves[LOSE_INDEX];
+        var leaves = this.numLeaves(this);
+        var winLeaves = leaves[WIN_INDEX];
+        var drawLeaves = leaves[DRAW_INDEX];
+        var loseLeaves = leaves[LOSE_INDEX];
         var totalLeaves = winLeaves + drawLeaves + loseLeaves;
 
         // (type) prob = (type) leaves / total leaves
@@ -163,7 +192,7 @@ class GameBoardNode {
         for (var i = 0; i < boxBoard.length; i++){
             if (boxBoard[i] == Box.EMPTY){
                 var configBoard = this.board.clone();
-                configBoard.setMove(i,currentTurn);
+                configBoard.setMove(i,this.currentTurn);
                 var configNode = new GameBoardNode(configBoard,nextTurn,this);
                 configNode.checkWinner();
                 this.config[i] = configNode;
@@ -212,18 +241,16 @@ class GameBoardNode {
 
         return winnerReturned;
     }
+
+    equals(otherNode){
+        return this.board.equals(otherNode.board);
+    }
+
+    get cacheID(){
+        return this.board.cacheID;
+    }
 }
 
 GameBoardNode.prototype.toString = function GameBoardNodeToString(){
-    var boardStr = "";
-    for (var i = 0; i < board.boardSize; i++){
-        boardStr += "|";
-        if (board.board[i] == Box.EMPTY)
-            boardStr += " ";
-        else
-            boardStr += board.board[i];
-        if (i % 3 == 2)
-            boardStr += "|\n";
-    }
-    return boardStr;
+    return this.board.toString();
 }
