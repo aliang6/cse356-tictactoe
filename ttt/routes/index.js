@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var playerName = "-1"
-var winner = "n"
+var playerName = "-1";
+var winner = "n";
+var gameState = "X       O";
 
 /* GET default page. */
 router.get('/', function(req, res, next) {
@@ -27,7 +28,7 @@ router.get('/ttt/play', function(req, res, next) {
   } else {
     var x = new Date();
     var date = x.getFullYear() + "-" + x.getMonth() + 1 + "-" + x.getDate();
-    res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner});
+    res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, gameState: gameState});
   }
 });
 
@@ -35,7 +36,8 @@ router.get('/ttt/play', function(req, res, next) {
 router.post('/ttt/play', function(req, res, next) {
   console.log("post request received");
   console.log(req.body);
-  
+  var gameState = req.body.gameState;
+  res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, gameState: gameState});
 });
 
 

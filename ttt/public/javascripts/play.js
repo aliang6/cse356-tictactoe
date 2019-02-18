@@ -1,12 +1,13 @@
+
 $('.cell')
 .click(function() {
+    $('.cell > .char').val("X");
     var gameState = "";
     $('.char').each(function() {
         gameState += $(this).text();
     });
     console.log(gameState);
     var json = {gameState: gameState};
-    json = JSON.stringify(json);
     $.post("/ttt/play", json);
     /*$.ajax({
         url: '130.245.168.173:3000/ttt/play',
