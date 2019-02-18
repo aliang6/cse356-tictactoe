@@ -33,7 +33,7 @@ class GameTree {
     findNode(board){
         if (board == null)
             return null;
-        var node = (this.dict[board.cacheID] === undefined) ? null : this.dict[board.cacheID];
+        var node = (this.dict[board.cacheID] == undefined) ? null : this.dict[board.cacheID];
         return node;
     }
 
@@ -68,15 +68,11 @@ class GameTree {
         if (root.isEnd)
             return;
         else {
-            // only build this branch of the tree if we haven't built it yet
-            // if (!found){
-            //     root.buildConfig();
-            //     var nextTurn = ((turn == PLAYERS_TURN) ? AI_TURN : PLAYERS_TURN);
-            //     for (var child in root.config){
-            //         this.buildTree(nextTurn,root.config[child]);
-            //     }
-            //     return;    
-            // }
+            // NOTE: we HAVE to build every part of the tree, even if some nodes are identical
+            // REASONING: given two board game nodes (states) X and Y s.t. X.equals(Y),
+            //              if X != Y then X.parent != Y.parent and the probabilities are different.
+            //              If we do not build the whole tree, the whole calculation of probabilities
+            //              will be thrown off by error that propagates from branches that are cut short.
             root.buildConfig();
             var nextTurn = ((turn == PLAYERS_TURN) ? AI_TURN : PLAYERS_TURN);
             for (var child in root.config){

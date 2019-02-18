@@ -178,7 +178,6 @@ class GameBoardNode {
     calcProbs(){
         // get the total # of leaves of each type
         var leaves = this.numLeaves(this);
-        // console.log("leaves " + leaves);
         var winLeaves = leaves[WIN_INDEX];
         var drawLeaves = leaves[DRAW_INDEX];
         var loseLeaves = leaves[LOSE_INDEX];
