@@ -12,41 +12,84 @@
     <div class="board">
         <div class="row">
             <div class="cell">
-                <h2 class="char"><%= gameState[0] %></h2>
+                <h2 class="char"><%= grid[0] %></h2>
             </div>
             <div class="cell">
-                <h2 class="char"><%= gameState[3] %></h2>
+                <h2 class="char"><%= grid[1] %></h2>
             </div>
             <div class="cell">
-                <h2 class="char"><%= gameState[6] %></h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="cell">
-                <h2 class="char"><%= gameState[1] %></h2>
-            </div>
-            <div class="cell">
-                <h2 class="char"><%= gameState[4] %></h2>
-            </div>
-            <div class="cell">
-                <h2 class="char"><%= gameState[7] %></h2>
+                <h2 class="char"><%= grid[2] %></h2>
             </div>
         </div>
         <div class="row">
             <div class="cell">
-                <h2 class="char"><%= gameState[2] %></h2>
+                <h2 class="char"><%= grid[3] %></h2>
             </div>
             <div class="cell">
-                <h2 class="char"><%= gameState[5] %></h2>
+                <h2 class="char"><%= grid[4] %></h2>
             </div>
             <div class="cell">
-                <h2 class="char"><%= gameState[8] %></h2>
+                <h2 class="char"><%= grid[5] %></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell">
+                <h2 class="char"><%= grid[6] %></h2>
+            </div>
+            <div class="cell">
+                <h2 class="char"><%= grid[7] %></h2>
+            </div>
+            <div class="cell">
+                <h2 class="char"><%= grid[8] %></h2>
             </div>
         </div>
     </div>
-    <h1>Winner: <%= winner %></h1>
+    <h1>Winner: <div id="winner"><%= winner %></div></h1>
+    <button type="button" id="reset">Reset board</button>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="/javascripts/play.js"></script>
+    <script>
+        $('#reset')
+        .click(function() {
+            $('.char').each(function() {
+                $(this).text(" ");
+            });
+            $.post("/ttt/play", {grid: "         ", winner: " "});
+        });
+
+        $('.cell')
+        .click(function() {
+            /*var selectedCell = 0;
+            var a = $(this).find('h2');
+            var b = ""
+            $('.char').each(function() {
+                if(a.is($(this))){
+                    b = $(this).find('h2');
+                    return false; // Break out of .each loop
+                } else {
+                    selectedCell++;
+                }
+            });
+            console.log(selectedCell);*/
+
+            var cellState = $(this).find('h2').text();
+            if(cellState !== "X" && cellState !== "O"){
+                $(this).find('h2').text("X");
+                var grid = "";
+                var winner = $("#winner").text();
+                $('.char').each(function() {
+                    grid += $(this).text();
+                });
+                console.log(grid);
+                
+                var json = {grid: grid, winner: winner};
+                $.post("/ttt/play", json, function(data) {
+                    console.log(data);
+                    $("#winner").text(data.winner);
+                });
+            }
+        });
+    </script>
   </body>
 </html>

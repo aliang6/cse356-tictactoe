@@ -3,7 +3,7 @@ var router = express.Router();
 
 var playerName = "-1";
 var winner = "n";
-var gameState = "X       O";
+var grid = "        O";
 
 /* GET default page. */
 router.get('/', function(req, res, next) {
@@ -18,26 +18,20 @@ router.get('/ttt', function(req, res, next) {
 /* POST name page */
 router.post('/ttt', function(req, res) { // Configure the link then redirect to GET /ttt/play
   playerName = req.body.name;
-  res.redirect('/ttt/play');
-});
-
-/* GET play page. */
-router.get('/ttt/play', function(req, res, next) {
-  if(playerName === "-1"){
-    res.redirect('/ttt');
-  } else {
-    var x = new Date();
-    var date = x.getFullYear() + "-" + x.getMonth() + 1 + "-" + x.getDate();
-    res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, gameState: gameState});
-  }
+  var x = new Date();
+  var date = x.getFullYear() + "-" + x.getMonth() + 1 + "-" + x.getDate();
+  res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
 });
 
 /* POST play page */
 router.post('/ttt/play', function(req, res, next) {
   console.log("post request received");
   console.log(req.body);
-  var gameState = req.body.gameState;
-  res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, gameState: gameState});
+  grid = req.body.grid;
+  var winner = req.body.winner;
+  return res.send({grid: grid, winner: winner});
+  res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
+  
 });
 
 
