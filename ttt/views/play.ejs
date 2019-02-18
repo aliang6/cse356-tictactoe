@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-    <h1>Winner: <div id="winner"><%= winner %></div></h1>
+    <h1> <div id="winner"><%= winner %></div></h1>
     <button type="button" id="reset">Reset board</button>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -55,7 +55,8 @@
             $('.char').each(function() {
                 $(this).text(" ");
             });
-            $.post("/ttt/play", {grid: "         ", winner: " "});
+            $('#winner').text('');
+            //$.post("/ttt/play", {grid: "         ", winner: " "});
         });
 
         $('.cell')
@@ -77,7 +78,6 @@
             if(cellState !== "X" && cellState !== "O"){
                 $(this).find('h2').text("X");
                 var grid = [];
-                var winner = $("#winner").text();
                 $('.char').each(function() {
                     grid.push($(this).text());
                 });
@@ -86,14 +86,23 @@
                 var json = {'grid': grid};
                 $.post("/ttt/play", json, function(data) {
                     console.log(data);
-                    $("#winner").text(data.winner);
+                    var winner = '';
+                    var win = data.winner;
+                    if(win === 'X'){
+                        winner = "X Won";
+                    } else if (win === 'O') {
+                        winner = "O Won";
+                    } else if (win === ' ') {
+                        winner = "Tie"
+                    }
+                    $("#winner").text(winner);
                     var grid = data.grid;
                     var i = 0;
                     $('.char').each(function() {
                         $(this).text(grid[i]);
                         i++;
                     });
-                });
+                }, json);
             }
         });
     </script>

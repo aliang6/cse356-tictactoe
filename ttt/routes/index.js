@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var playerName = "-1";
-var winner = "n";
+var winner = "";
 var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
 var gbModule = require('../game/GameBoard');
