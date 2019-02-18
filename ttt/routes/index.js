@@ -31,8 +31,12 @@ router.get('/ttt/play', function(req, res, next) {
   }
 });
 
+/* POST play page */
 router.post('/ttt/play', function(req, res, next) {
-  print("JSON received");
+  console.log("post request received");
+  console.log(req.body);
+  
 });
+
 
 module.exports = router;
