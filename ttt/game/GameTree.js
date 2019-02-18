@@ -103,21 +103,6 @@ class GameTree {
         return occurrencesPos;
     }
 
-    indicesOfRep(board, number, array){
-        // find indices of repeated elements in an array
-        var occurrences = findOccurrences(number,array);
-        var indices = [];
-        var node = this.findNode(board);
-        for (var i = 0; i < array.length; i++){
-            if (node.config[i] instanceof GameBoardNode){
-                if (array[i] == number){
-                    indices.push(i);
-                }
-            }
-        }
-        return indices;
-    }
-
     isLegalBoard(node){
         var numPlayerMoves = node.board.numPlayerMoves(PLAYERS_TURN);
         var numMoves = node.board.numMoves;
@@ -165,9 +150,7 @@ class GameTree {
             // fill up the arrays accordingly
             for (var i in node.config){
                 node.config[i].calcProbs();
-                if (node.config[i] instanceof GameBoardNode){
-                    nonNullChildren.push(i);
-                }
+                nonNullChildren.push(i);
                 winProbs.push(node.config[i].probs[WIN_INDEX]);
                 loseProbs.push(node.config[i].probs[LOSE_INDEX]);
             }
@@ -178,12 +161,12 @@ class GameTree {
             var highestLoseChanceIndex = -1;
             var highestLoseChance = 0.0;
             for (var i = 0; i < nonNullChildren.length; i++){
-                if (winProbs[nonNullChildren[i]] < smallestWinChance){
-                    smallestWinChance = winProbs[nonNullChildren[i]];
+                if (winProbs[i] < smallestWinChance){
+                    smallestWinChance = winProbs[i];
                     smallestWinChanceIndex = i;
                 }
-                if (loseProbs[nonNullChildren[i]] > highestLoseChance){
-                    highestLoseChance = loseProbs[nonNullChildren[i]];
+                if (loseProbs[i] > highestLoseChance){
+                    highestLoseChance = loseProbs[i];
                     highestLoseChanceIndex = i;
                 }
             }
@@ -192,38 +175,60 @@ class GameTree {
             var smallestWinChanceRep = GameTree.findOccurrences(smallestWinChance, winProbs);
             var highestLoseChanceRep = GameTree.findOccurrences(highestLoseChance, loseProbs);
 
+            // console.log("hi3.2");
+            // console.log("winprobs = " + winProbs);
+            // console.log("loseprobs = " + loseProbs);
+            // console.log("nonnullchildren = " + nonNullChildren);
+            // console.log("smallestwinchance = " + smallestWinChance);
+            // console.log("smallestwinchanceindex = " + smallestWinChanceIndex);
+            // console.log("highestlosechance = " + highestLoseChance);
+            // console.log("highestlosechanceindex = " + highestLoseChanceIndex);
+            // console.log("smallestwinchancerep = " + smallestWinChanceRep);
+            // console.log("highestlosechancerep = " + highestLoseChanceRep);
+
             // if there are multiple nodes with the same probabilities, move to a random one
-            var multiple = false;
-            var sameWinProbs = GameTree.findOccurrencesPositions(smallestWinChance,winProbs);
-            var sameLoseProbs = GameTree.findOccurrencesPositions(highestLoseChance,loseProbs);
-            var sameProbs = [];
-            for (var i = 0; i < sameWinProbs.length; i++){
-                for (var j = 0; j < sameLoseProbs.length; j++){
-                    if (sameWinProbs[i] == sameLoseProbs[j]) {
-                        sameProbs.push(sameWinProbs[i]);
-                    }
-                }
-            }
+            // var multiple = false;
+            // var sameWinProbs = GameTree.findOccurrencesPositions(smallestWinChance,winProbs);
+            // var sameLoseProbs = GameTree.findOccurrencesPositions(highestLoseChance,loseProbs);
+            // var sameProbs = [];
+            // for (var i = 0; i < sameWinProbs.length; i++){
+            //     for (var j = 0; j < sameLoseProbs.length; j++){
+            //         if (sameWinProbs[i] == sameLoseProbs[j]) {
+            //             sameProbs.push(sameWinProbs[i]);
+            //         }
+            //     }
+            // }
+
+            // console.log("hi3.5");
             
-            if (sameProbs.length > 0){
-                return this.makeMove(node, sameProbs[parseInt(Math.random()*sameProbs.length)]);
-            }
+            // if (sameProbs.length > 0){
+
+            //     let random = Math.random() * sameProbs.length;
+            //     console.log("sameprobs len = " + sameProbs.length + "random = " + parseInt(random));
+            //     console.log("sameprobs = " + sameProbs);
+                
+            //     return this.makeMove(node, sameProbs[parseInt(random)]);
+            // }
 
             // if smallest win chance occurs only once, go to that child
-            if (smallestWinChanceRep == 1 || (smallestWinChance == 0.0 && loseProbs[nonNullChildren[smallestWinChanceIndex]] == 1.0))
+            if (smallestWinChanceRep == 1 || (smallestWinChance == 0.0 && loseProbs[smallestWinChanceIndex] == 1.0)){
                 return this.makeMove(node, nonNullChildren[smallestWinChanceIndex]);
+            }
             else {
                 // else go to the child with the smallest win chance and highest lose chance
-                var smallestWHighestLChanceIndex = nonNullChildren[smallestWinChanceIndex];
-                var smallestWHighestLChance = loseProbs[nonNullChildren[smallestWinChanceIndex]];
-                var indicesOfWinChance = indicesOfRep(smallestWinChance,winProbs);
-                for (var i = 0; i < indicesOfWinChance.length; i++){
-                    if (loseProbs[indicesOfWinChance[i]] >= smallestWHighestLChance){
-                        smallestWHighestLChanceIndex = indicesOfWinChance[i];
-                        smallestWHighestLChance = loseProbs[indicesOfWinChance[i]];
+                var smallestWHighestLChanceIndex = smallestWinChanceIndex;
+                var smallestWHighestLChance = loseProbs[smallestWinChanceIndex];
+                var indicesOfSWinChance = GameTree.findOccurrencesPositions(smallestWinChance,winProbs);
+                // console.log("indicesofswinchance = " + indicesOfSWinChance);
+                for (var i = 0; i < indicesOfSWinChance.length; i++){
+                    if (loseProbs[indicesOfSWinChance[i]] >= smallestWHighestLChance){
+                        smallestWHighestLChanceIndex = indicesOfSWinChance[i];
+                        smallestWHighestLChance = loseProbs[indicesOfSWinChance[i]];
                     }
                 }
-                return this.makeMove(node, smallestWHighestLChanceIndex);
+                // console.log("smallestwhighestlchanceindex = " + smallestWHighestLChanceIndex);
+                // console.log("smallestwhighestlchance = " + smallestWHighestLChance);
+                return this.makeMove(node, nonNullChildren[smallestWHighestLChanceIndex]);
             }
         }
         else {
