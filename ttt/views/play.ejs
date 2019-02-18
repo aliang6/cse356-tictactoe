@@ -87,6 +87,12 @@
                 $.post("/ttt/play", json, function(data) {
                     console.log(data);
                     $("#winner").text(data.winner);
+                    var grid = data.grid;
+                    var i = 0;
+                    $('.char').each(function() {
+                        $(this).text(grid[i]);
+                        i++;
+                    });
                 });
             }
         });
