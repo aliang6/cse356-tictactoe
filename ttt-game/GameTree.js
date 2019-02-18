@@ -51,17 +51,20 @@ class GameTree {
     buildTree(turn, root){
         // builds the tree starting from root and the current turn
         root = (root == null) ? this.root : root;
+        var found = !(this.dict[root.cacheID] == undefined);
+        if (!found){
+            this.dict[root.cacheID] = root;
+        }
         if (root.isEnd)
             return;
         else {
             // only build this branch of the tree if we haven't built it yet
-            if (this.dict[root.cacheID] == undefined){
+            if (!found){
                 root.buildConfig();
                 var nextTurn = ((turn == PLAYERS_TURN) ? AI_TURN : PLAYERS_TURN);
                 for (var child in root.config){
                     this.buildTree(nextTurn,root.config[child]);
                 }
-                this.dict[root.cacheID] = root;
                 return;    
             }
         }
@@ -101,6 +104,14 @@ class GameTree {
             }
         }
         return indices;
+    }
+
+    checkLegalBoard(board){
+        var node = this.findNode(board);
+        var numPlayerMoves = node.board.numPlayerMoves(PLAYERS_TURN);
+        var numMoves = node.board.numMoves;
+        var numAIMoves = numMoves - numPlayerMoves;
+        return (Math.abs(numPlayerMoves - numAIMoves) <= 1);
     }
 
     AIPlayGame(board){

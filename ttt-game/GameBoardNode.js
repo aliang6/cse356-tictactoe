@@ -3,6 +3,7 @@ const WIN_INDEX = 0;
 const DRAW_INDEX = 1;
 const LOSE_INDEX = 2;
 const CONFIG_LEN = 9;
+const WINNER_JSON_KEY = "winner";
 
 class GameBoardNode {
 
@@ -248,6 +249,26 @@ class GameBoardNode {
 
     get cacheID(){
         return this.board.cacheID;
+    }
+
+    toJSON(){
+        var dict = this.board.toJSON();
+        var val = '';
+        if (winner != null){
+            switch (winner){
+                case Box.X:
+                    val = 'X';
+                    break;
+                case Box.O:
+                    val = 'O';
+                    break;
+                case Box.EMPTY:
+                    val = ' ';
+                    break;
+            }
+        }
+        dict[WINNER_JSON_KEY] = val;
+        return dict;
     }
 }
 

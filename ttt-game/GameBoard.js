@@ -1,5 +1,6 @@
 var Box = {"EMPTY": 3, "X": 1, "O": 2}
 const BOARD_SIZE = 9;
+const BOARD_JSON_KEY = "grid";
 
 class GameBoard {
 
@@ -83,6 +84,15 @@ class GameBoard {
             id += this.board[i];
         }
         return id;
+    }
+
+    toJSON(){
+        var dict = {BOARD_JSON_KEY: []};
+        for (var i = 0; i < BOARD_SIZE; i++){
+            var val = (this.board[i] == Box.EMPTY) ? ' ' : ((this.board[i] == Box.X) ? 'X' : 'O');
+            dict[BOARD_JSON_KEY].push(val);
+        }
+        return dict;
     }
 
 }
