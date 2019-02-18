@@ -5,9 +5,9 @@ var playerName = "-1";
 var winner = "n";
 var grid = "        O";
 
-var gbModule = require('./GameBoard');
-var gbnModule = require('./GameBoardNode');
-var gtModule = require('./GameTree');
+var gbModule = require('../game/GameBoard');
+var gbnModule = require('../game/GameBoardNode');
+var gtModule = require('../game/GameTree');
 
 var tree = new gtModule.GameTree();
 tree.buildTree(gtModule.PLAYERS_TURN);

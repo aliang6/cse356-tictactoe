@@ -1,3 +1,8 @@
+exports.id = 'game/GameTree';
+var Box = require('./GameBoard').Box;
+var GameBoard = require('./GameBoard').GameBoard;
+var GameBoardNode = require('./GameBoardNode').GameBoardNode;
+
 const PLAYERS_TURN = Box.X;
 const AI_TURN = Box.O;
 
@@ -218,5 +223,6 @@ class GameTree {
 
 }
 
+module.exports.GameTree = GameTree;
 module.exports.PLAYERS_TURN = PLAYERS_TURN;
 module.exports.AI_TURN = AI_TURN;

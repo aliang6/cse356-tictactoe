@@ -1,3 +1,5 @@
+exports.id = 'game/GameBoard';
+
 var Box = {"EMPTY": 3, "X": 1, "O": 2}
 const BOARD_SIZE = 9;
 const BOARD_JSON_KEY = "grid";

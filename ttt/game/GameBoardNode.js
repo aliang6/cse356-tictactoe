@@ -1,3 +1,8 @@
+exports.id = 'game/GameBoardNode';
+
+var Box = require('./GameBoard').Box;
+var GameBoard = require('./GameBoard').GameBoard;
+
 // Indices that describe each index of the array returned by getNumLeaves(node)
 const WIN_INDEX = 0;
 const DRAW_INDEX = 1;
@@ -276,8 +281,9 @@ GameBoardNode.prototype.toString = function GameBoardNodeToString(){
     return this.board.toString();
 }
 
-exports.module.WIN_INDEX = WIN_INDEX;
-exports.module.DRAW_INDEX = DRAW_INDEX;
-exports.module.LOSE_INDEX = LOSE_INDEX;
-exports.module.CONFIG_LEN = CONFIG_LEN;
-exports.module.WINNER_JSON_KEY = WINNER_JSON_KEY;
+module.exports.GameBoardNode = GameBoardNode;
+module.exports.WIN_INDEX = WIN_INDEX;
+module.exports.DRAW_INDEX = DRAW_INDEX;
+module.exports.LOSE_INDEX = LOSE_INDEX;
+module.exports.CONFIG_LEN = CONFIG_LEN;
+module.exports.WINNER_JSON_KEY = WINNER_JSON_KEY;
