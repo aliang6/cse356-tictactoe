@@ -1,5 +1,3 @@
-
-
 // Indices that describe each index of the array returned by getNumLeaves(node)
 const WIN_INDEX = 0;
 const DRAW_INDEX = 1;
@@ -136,11 +134,11 @@ class GameBoardNode {
     }
 
     numLeaves(node, winL, drawL, loseL){
-        winL = (winL === undefined) ? 0 : winL;
-        drawL = (drawL === undefined) ? 0 : drawL;
-        loseL = (loseL === undefined) ? 0 : loseL;
+        winL = (winL == undefined) ? 0 : winL;
+        drawL = (drawL == undefined) ? 0 : drawL;
+        loseL = (loseL == undefined) ? 0 : loseL;
         var leaves = [];
-        for (var i = 0; i < 2; i++){
+        for (var i = 0; i <= 2; i++){
             if (i == WIN_INDEX)
                 leaves.push(winL);
             else if (i == DRAW_INDEX)

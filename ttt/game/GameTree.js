@@ -14,14 +14,12 @@ const LOSE_INDEX = gbnModule.LOSE_INDEX;
 
 class GameTree {
 
-    // Variables
-    //      GameBoardNode root
-
     constructor(){
         this.root = new GameBoardNode(new GameBoard(), PLAYERS_TURN);
         this.dict = {}
     }
 
+    // Getters and Setters
     get root(){
         return this.rootVal;
     }
@@ -30,25 +28,38 @@ class GameTree {
         this.rootVal = root;
     }
 
+    /**
+     * Finds the GameBoardNode corresponding to the current board.
+     * 
+     * Uses the board's cacheID to search the cache.
+     * @param {GameBoard} board the current board
+     */
     findNode(board){
         if (board == null)
             return null;
         var node = (this.dict[board.cacheID] == undefined) ? null : this.dict[board.cacheID];
         return node;
     }
-
-    makeMove(node, position){
-        var currentBoard = node.board;
-
-        if (!currentBoard.checkSpot(position))
-            throw `"Illegal Move to ${position}"`;
-        
-        var nextNode = node.config[position];
-        nextNode.calcProbs();
-        return nextNode;
+    
+    /**
+     * Checks if the board is legal.
+     * 
+     * Not used if the cache is used, as cache will always contain all
+     * valid board states. If findNode(board) returns null, the board is invalid.
+     * @param {GameBoard} board the current board
+     */
+    isLegalBoard(board){
+        var numPlayerMoves = board.numPlayerMoves(PLAYERS_TURN);
+        var numMoves = board.numMoves;
+        var numAIMoves = numMoves - numPlayerMoves;
+        return (Math.abs(numPlayerMoves - numAIMoves) <= 1);
     }
 
-    checkDoubleTrap(node){
+    /**
+     * Returns the positions of the player's moves.
+     * @param {GameBoardNode} node the state of the game
+     */
+    getPlayerMoves(node){
         var playerMovePos = [];
         for (var i = 0; i < node.board.board.length; i++){
             if (node.board.board[i] == PLAYERS_TURN){
@@ -58,8 +69,29 @@ class GameTree {
         return playerMovePos;
     }
 
+    /**
+     * Makes a move and returns the next node representing the new state of the game.
+     * @param {GameBoardNode} node  the state of the game
+     * @param {int} position        the position to make a move
+     */
+    makeMove(node, position){
+        var currentBoard = node.board;
+
+        if (!currentBoard.checkSpot(position))
+            return null;
+            // throw `"Illegal Move to ${position}"`;
+        
+        var nextNode = node.config[position];
+        nextNode.calcProbs();
+        return nextNode;
+    }
+
+    /**
+     * Builds the GameTree starting at root with the turn specified.
+     * @param {Box} turn            the current turn
+     * @param {GameBoardNode} root  the root of the GameTree
+     */
     buildTree(turn, root){
-        // builds the tree starting from root and the current turn
         root = (root == null) ? this.root : root;
         var found = (this.dict[root.cacheID] != undefined);
         if (!found){
@@ -82,6 +114,31 @@ class GameTree {
         }
     }
 
+    /**
+     * Returns a list of the GameBoardNodes that correspond to the list of moves specified.
+     * If invalid, returns null.
+     * 
+     * @param {int[]} moves a list of the moves that have been made for a specific game
+     */
+    gameHistory(moves){
+        let currentNode = this.root;
+        var history = [];
+        for (var index in moves){
+            let move = moves[index];
+            if (currentNode.config[move] == null){
+                return null;
+            }
+            currentNode = currentNode.config[move];
+            history.push(currentNode);
+        }
+        return history;
+    }
+
+    /**
+     * Returns the number of times number appears in array.
+     * @param {int} number      number to search for
+     * @param {int[]} array     array to look through
+     */
     static findOccurrences(number, array){
         var occurrences = 0;
         for (var i = 0; i < array.length; i++){
@@ -91,6 +148,11 @@ class GameTree {
         return occurrences;
     }
 
+    /**
+     * Returns the indices that number appears in in array.
+     * @param {int} number      number to search for
+     * @param {int[]} array     array to look through
+     */
     static findOccurrencesPositions(number, array){
         var occurrencesPos = [];
         for (var i = 0; i < array.length; i++){
@@ -103,23 +165,42 @@ class GameTree {
         return occurrencesPos;
     }
 
-    isLegalBoard(node){
-        var numPlayerMoves = node.board.numPlayerMoves(PLAYERS_TURN);
-        var numMoves = node.board.numMoves;
-        var numAIMoves = numMoves - numPlayerMoves;
-        return (Math.abs(numPlayerMoves - numAIMoves) <= 1);
-    }
-
-    AIPlayGame(board){
+    /**
+     * Returns the new state of the game by calculating probabilities.
+     * @param {GameBoard} board     the GameBoard representing the current state of the game
+     * @param {int} playerMove      the position the player wishes to move
+     */
+    AIPlayGame(board, playerMove){
         var node = this.findNode(board);
-        if (!this.isLegalBoard(node))
-            return null;
+
+        // Check if board is legal.
         if (node == null)
             return null;
+
+        // Check if the board specified has already ended.
         if (node.isEnd)
             return node;
+
+        // If the player did not specify a move, return the current node.
+        if (playerMove == undefined){
+            return node;
+        }
+
+        // If the player specified a move but it is not his turn, then return null.
+        if (node.currentTurn != PLAYERS_TURN)
+            return null;
+
+        // Attempt to make the player's move.
+        node = this.makeMove(node, playerMove);
+        
+        // If the player specified an invalid move or if the game has reached the end,
+        //      then return the node.
+        if (node == null || node.isEnd)
+            return node;
+
+        // Calculate which move to make and return the new node.
         if (!node.isEnd && node.currentTurn == AI_TURN){
-            var playerMovePos = this.checkDoubleTrap(node);
+            var playerMovePos = this.getPlayerMoves(node);
             if (playerMovePos.length == 2){
                 // check for double trap
                 if (playerMovePos[0] == 0 && playerMovePos[1] == 8 && node.board.board[1] == Box.EMPTY) {
