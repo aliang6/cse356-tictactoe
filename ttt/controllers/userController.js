@@ -1,48 +1,32 @@
 const User = require('../models/User');
 
 module.exports.getUsers = function(){
-    var query = User.find({});
-    return query.exec(function(err,users){
-        if (err)
-            return null;
-        console.log(users);
-        return users;
-    });
+    var users = await User.find({});
+    if (!users) return null;
+    console.log(users);
+    return users;
 }
 
 module.exports.findUser = function(username){
-    var query = User.find({ 'username' : username }).limit(1);
-    return query.exec(function(err, user){
-        if (err)
-            return null;
-        return user;
-    });
+    var user = await User.find({ 'username' : username }).limit(1);
+    return user;
 };
 
 module.exports.addUser = function(username, password, email){
     var newUser = new User({"username": username, "password": password, "email": email});
-    return newUser.save(function(err){
-        if (err)
-            return false;
-        return true;
-    });
+    var success = await newUser.save();
+    return (!success) ? false : true;
 };
 
 module.exports.verifyUser = function(email, key){
-    var query = User.find({ 'email': email }).limit(1);
-    return query.exec(function(err, user){
-        if (err)
-            return false;
-        user.enabled = true;
-        return success;
-    });
+    var user = await User.find({ 'email': email }).limit(1);
+    if (!user) return null;
+    user.enabled = true;
+    var success = await user.save();
+    return (!success) ? false : true;
 };
 
 module.exports.authUser = function(username, password){
-    var query = User.find({ 'username': username, 'password': password }).limit(1);
-    return query.exec(function(err, user){
-        if (err)
-            return false;
-        return true;
-    });
+    var user = await User.find({ 'username': username, 'password': password }).limit(1);
+    return (!user) ? false : true;
 };
