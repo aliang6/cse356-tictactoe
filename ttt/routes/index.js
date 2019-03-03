@@ -1,21 +1,63 @@
 var express = require('express');
+
 var router = express.Router();
 
 var playerName = "-1";
 var winner = "";
 var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
+/* GameTree */
 var gbModule = require('../game/GameBoard');
 var gbnModule = require('../game/GameBoardNode');
-var gtModule = require('../game/GameTree');
-
+var gtModule = require('../game/GameTree')
 var tree = new gtModule.GameTree();
 tree.buildTree(gtModule.PLAYERS_TURN);
+
+/* Mongo */
+var mongo = require('mongodb').MongoClient;
+var db_url = 'mongodb://localhost/ttt';
+var collection_users = 'users';
+var collection_games = 'games';
+
+mongo.connect(db_url, function(err, db){
+  console.log("MongoDB connection established.");
+});
 
 
 /* GET default page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
+});
+
+/* Account Creation */
+router.post('/adduser', function(req, res) {
+  res.render('index', { title: 'adduser' });
+});
+
+router.post('/verify', function(req, res){
+  res.render('index', { title: 'verify'})
+});
+
+/* Logging In */
+router.post('/login', function(req, res){
+  res.render('index', { title: 'login'})
+});
+
+router.post('/logout', function(req, res){
+  res.render('index', { title: 'logout'})
+});
+
+/* Viewing Games */
+router.post('/listgames', function(req, res){
+  res.render('index', { title: 'listgames'})
+});
+
+router.post('/getgame', function(req, res){
+  res.render('index', { title: 'getgame'})
+});
+
+router.post('/getscore', function(req, res){
+  res.render('index', { title: 'getscore'})
 });
 
 /* GET name page. */
