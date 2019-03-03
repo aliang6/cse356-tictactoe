@@ -1,5 +1,15 @@
+// imports
 var express = require('express');
 
+var gbModule = require('../game/GameBoard');
+var gbnModule = require('../game/GameBoardNode');
+var gtModule = require('../game/GameTree');
+
+var MongoClient = require('mongodb').MongoClient;
+
+var getCurrentDate = require('../utils/date').getCurrentDate;
+
+// variables
 var router = express.Router();
 
 var playerName = "-1";
@@ -7,19 +17,15 @@ var winner = "";
 var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
 /* GameTree */
-var gbModule = require('../game/GameBoard');
-var gbnModule = require('../game/GameBoardNode');
-var gtModule = require('../game/GameTree')
 var tree = new gtModule.GameTree();
 tree.buildTree(gtModule.PLAYERS_TURN);
 
-/* Mongo */
-var mongo = require('mongodb').MongoClient;
+/* MongoClient */
 var db_url = 'mongodb://localhost/ttt';
 var collection_users = 'users';
 var collection_games = 'games';
 
-mongo.connect(db_url, function(err, db){
+MongoClient.connect(db_url, function(err, db){
   console.log("MongoDB connection established.");
 });
 
@@ -31,6 +37,16 @@ router.get('/', function(req, res, next) {
 
 /* Account Creation */
 router.post('/adduser', function(req, res) {
+  var existing = false;
+  var query = "";
+  var username = req.body.username;
+  var pass = req.body.password;
+  var email = req.body.email;
+  MongoClient.connect(db_url, function(err, db){
+    query = db.collection(collection_users).find({"username": username}).limit(1);
+    console.log(query);
+  });
+  res.send(query);
   res.render('index', { title: 'adduser' });
 });
 
