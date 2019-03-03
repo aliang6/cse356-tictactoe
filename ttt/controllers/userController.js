@@ -14,7 +14,7 @@ async function findUser(username){
     return users[0];
 };
 
-async function findUserByID(uid){
+module.exports.findUserByID = async(uid) => {
     var users = await User.findById(uid).limit(1);
     if (users.length == 0)
         return null;
