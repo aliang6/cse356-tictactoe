@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Game = require('../models/Game');
-const UserController = require('userController');
+const UserController = require('./userController');
 
 async function getGames(uid){
     var user = UserController.findUserById(uid);
