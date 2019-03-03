@@ -50,16 +50,12 @@ router.get('/users', function(req, res){
 });
 
 router.post('/adduser', function(req, res) {
-  var existing = false;
-  var query = "";
   var username = req.body.username;
   var pass = req.body.password;
   var email = req.body.email;
-  if (UserController.addUser(username,pass,email))
-    console.log("added");
-  else
-    console.log("failed");
-  res.send(query);
+  var success = UserController.addUser(username,pass,email);
+  console.log((success) ? "success" : "failed");
+  res.send(success);
 });
 
 router.post('/finduser', function(req, res){
