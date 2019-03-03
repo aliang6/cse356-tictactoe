@@ -1,13 +1,30 @@
-// imports
-var express = require('express');
+// express
+const express = require('express');
 
-var gbModule = require('../game/GameBoard');
-var gbnModule = require('../game/GameBoardNode');
-var gtModule = require('../game/GameTree');
+// gametree
+const gbModule = require('../game/GameBoard');
+const gbnModule = require('../game/GameBoardNode');
+const gtModule = require('../game/GameTree');
 
-var MongoClient = require('mongodb').MongoClient;
+// mongoose
+const mongoose = require('mongoose');
+var mongodb = 'mongodb://localhost/ttt';
+var collection_users = 'users';
+var collection_games = 'games';
+mongoose.connect(mongodb, { useNewUrlParser: true });
+mongoose.Promise = require('bluebird');
+var db = mongoose.connection;
+//Bind connection to error event (to get notification of connection errors)
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-var getCurrentDate = require('../utils/date').getCurrentDate;
+// mongoose models
+// const User = require('../models/User');
+// const Game = require('../models/Game');
+const UserController = require('../controllers/userController');
+const GameController = require('../controllers/gameController');
+
+// utils
+const getCurrentDate = require('../utils/date').getCurrentDate;
 
 const sendVerificationEmail = require('../utils/mail').sendVerificationEmail;
 
@@ -18,18 +35,8 @@ var playerName = "-1";
 var winner = "";
 var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
-/* GameTree */
 var tree = new gtModule.GameTree();
 tree.buildTree(gtModule.PLAYERS_TURN);
-
-/* MongoClient */
-var db_url = 'mongodb://localhost/ttt';
-var collection_users = 'users';
-var collection_games = 'games';
-
-MongoClient.connect(db_url, function(err, db){
-  console.log("MongoDB connection established.");
-});
 
 
 /* GET default page. */
@@ -38,18 +45,25 @@ router.get('/', function(req, res, next) {
 });
 
 /* Account Creation */
-router.post('/adduser', function(req, res) {
-  var existing = false;
-  var query = "";
+router.get('/users', async(req, res) => {
+  var users = await UserController.getUsers();
+  console.log(users);
+  res.send(users);
+});
+
+router.post('/adduser', async(req, res) => {
   var username = req.body.username;
   var pass = req.body.password;
   var email = req.body.email;
-  MongoClient.connect(db_url, function(err, db){
-    query = db.collection(collection_users).find({"username": username}).limit(1);
-    console.log(query);
-  });
-  res.send(query);
-  res.render('index', { title: 'adduser' });
+  var success = await UserController.addUser(username,pass,email);
+  console.log((success) ? "success" : "failed");
+  res.send(success);
+});
+
+router.post('/finduser', async(req, res) => {
+  var user = await UserController.findUser(req.body.username);
+  console.log(user);
+  res.send(user);
 });
 
 router.get('/send', function(req, res){
