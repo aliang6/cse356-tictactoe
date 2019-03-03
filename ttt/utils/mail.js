@@ -10,7 +10,7 @@ async function sendVerificationEmail(email, key){
     //host: "smtp.ethereal.email",
     port: 587,
     auth: {
-        user: 'jondysong@gmail.com',
+        user: process.env.APP_USER,
         pass: process.env.APP_PASS
     }
     });
@@ -22,7 +22,7 @@ async function sendVerificationEmail(email, key){
     */
     let mailOptions = {
         from: '"no-reply" <no-reply@tic-tac-terminator.com>',
-        to: 'jondysong@gmail.com',
+        to: email,
         subject: "Test",
         text: "The verification code is abracadabra.",
         html: "<p>The verification code is abracadabra.</p>"
