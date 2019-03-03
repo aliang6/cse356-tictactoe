@@ -26,7 +26,12 @@ var collection_users = 'users';
 var collection_games = 'games';
 
 MongoClient.connect(db_url, function(err, db){
+  if (err){
+    console.log("Error connecting to MongoDB");
+    return;
+  }
   console.log("MongoDB connection established.");
+  
 });
 
 
@@ -43,7 +48,7 @@ router.post('/adduser', function(req, res) {
   var pass = req.body.password;
   var email = req.body.email;
   MongoClient.connect(db_url, function(err, db){
-    query = db.collection(collection_users).find({"username": username}).limit(1);
+    query = db.users.find({"username":username}).limit(1);
     console.log(query);
   });
   res.send(query);
