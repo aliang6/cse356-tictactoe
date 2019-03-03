@@ -62,6 +62,12 @@ router.post('/adduser', function(req, res) {
   res.send(query);
 });
 
+router.post('/finduser', function(req, res){
+  var user = UserController.findUser(req.body.username);
+  console.log(user);
+  res.send(user);
+});
+
 router.post('/verify', function(req, res){
   res.render('index', { title: 'verify'})
 });

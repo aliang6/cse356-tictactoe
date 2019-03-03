@@ -17,20 +17,15 @@ module.exports.findUser = findUser;
 
 module.exports.addUser = async(username, password, email) => {
     var user = findUser(username);
-    console.log("user" + user);
     var user = await User.find({ 'email' : email});
-    console.log("trying to save");
     var newUser = {"username": username, "password": password, "email": email};
-    console.log(newUser);
-    User.create(newUser)
+    return User.create(newUser)
         .then(doc => {
-            console.log("hi");
-            console.log(doc);
+            return true;
         })
         .catch(err => {
-            console.log(err);
+            return false;
         });
-    return true;
 };
 
 module.exports.verifyUser = async(email, key) => {
