@@ -17,12 +17,8 @@ module.exports.findUser = findUser;
 
 module.exports.addUser = async(username, password, email) => {
     var user = findUser(username);
-    console.log(user);
-    if (user)
-        return false;
+    console.log("user" + user);
     var user = await User.find({ 'email' : email});
-    if (user)
-        return false;
     console.log("trying to save");
     User.create({"username": username, "password": password, "email": email})
         .then(doc => {
