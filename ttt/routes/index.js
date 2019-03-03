@@ -44,7 +44,9 @@ router.get('/', function(req, res, next) {
 
 /* Account Creation */
 router.post('/finduser', function(req, res){
-  res.send(UserController.findUser(req.body.username));
+  var user = UserController.findUser(req.body.username);
+  console.log(user);
+  res.send(user);
 });
 
 router.post('/adduser', function(req, res) {
