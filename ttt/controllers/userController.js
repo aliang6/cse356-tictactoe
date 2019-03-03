@@ -14,6 +14,7 @@ module.exports.findUser = async(username) => {
 
 module.exports.addUser = async(username, password, email) => {
     var newUser = new User({"username": username, "password": password, "email": email});
+    console.log(newUser);
     var success = await newUser.save();
     return (!success) ? false : true;
 };
@@ -22,8 +23,7 @@ module.exports.verifyUser = async(email, key) => {
     var user = await User.find({ 'email': email }).limit(1);
     if (!user) return null;
     if (key == user._id){
-        user.enabled = true;
-        var success = await user.save();
+        var success = await user.update({"enabled": true});
         return (!success) ? false : true;
     }
     return false;
