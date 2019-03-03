@@ -44,7 +44,7 @@ router.get('/', function(req, res, next) {
 
 /* Account Creation */
 router.get('/users', function(req, res){
-  var users = UserController.getUsers();
+  var users = await UserController.getUsers();
   console.log(users);
   res.send(users);
 });
@@ -53,13 +53,13 @@ router.post('/adduser', function(req, res) {
   var username = req.body.username;
   var pass = req.body.password;
   var email = req.body.email;
-  var success = UserController.addUser(username,pass,email);
+  var success = await UserController.addUser(username,pass,email);
   console.log((success) ? "success" : "failed");
   res.send(success);
 });
 
 router.post('/finduser', function(req, res){
-  var user = UserController.findUser(req.body.username);
+  var user = await UserController.findUser(req.body.username);
   console.log(user);
   res.send(user);
 });
