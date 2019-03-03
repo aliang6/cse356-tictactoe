@@ -113,7 +113,6 @@ router.post('/login', async(req, res) => {
     return;
   }
   let userid = await UserController.authUser(username,password);
-  let responseBody = { };
   if (userid != null)
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
   res.cookie(jsonConstants.UID_COOKIE, userid);
@@ -183,7 +182,6 @@ router.post('/getscore', async(req, res) => {
     return;
   }
   let games = await GameController.getGameIDs(uid);
-  let responseBody = {}
   if (games == null){
     res.send(responseBody);
     return;
