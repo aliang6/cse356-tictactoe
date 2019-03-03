@@ -23,7 +23,8 @@ module.exports.addUser = async(username, password, email) => {
     var user = await User.find({ 'email' : email});
     if (user)
         return false;
-    var success = await newUser.save({"username": username, "password": password, "email": email});
+    console.log("trying to save");
+    var success = await User.create({"username": username, "password": password, "email": email});
     return (!success) ? false : true;
 };
 
