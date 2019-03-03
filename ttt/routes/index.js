@@ -63,34 +63,63 @@ router.get('/verify', function(req, res){
 
 router.post('/verify', function(req, res){
   let key = res.body.key;
+  let responseBody = {status: 'ERROR'}
   if(key === 'abracadabra'){
     // Find and enable user
     let email = res.body.email;
 
-    res.send
+    responseBody = {status: 'OK'}
   }
+  console.log(responsebody)
+  res.send(responseBody);
 });
 
-/* Logging In */
+/* Logging In/Out */
 router.post('/login', function(req, res){
-  res.render('index', { title: 'login'})
+  let verified = true;
+  let responseBody = {status: 'ERROR'}
+  if(verified) {
+    responseBody = {status: 'OK'}
+  } 
+  console.log(responseBody)
+  res.send(responseBody)
 });
 
 router.post('/logout', function(req, res){
-  res.render('index', { title: 'logout'})
+  let responseBody = {status: 'ERROR'}
+  if(true) {
+    responseBody = {status: 'OK'}
+  } 
+  console.log(responseBody)
+  res.send(responseBody)
 });
 
 /* Viewing Games */
 router.post('/listgames', function(req, res){
-  res.render('index', { title: 'listgames'})
+  let responseBody = {status: 'ERROR'}
+  if(true) {
+    responseBody = {status: 'OK'}
+  } 
+  console.log(responseBody)
+  res.send(responseBody)
 });
 
 router.post('/getgame', function(req, res){
-  res.render('index', { title: 'getgame'})
+  let responseBody = {status: 'ERROR'}
+  if(true) {
+    responseBody = {status: 'OK'}
+  } 
+  console.log(responseBody)
+  res.send(responseBody)
 });
 
 router.post('/getscore', function(req, res){
-  res.render('index', { title: 'getscore'})
+  let responseBody = {status: 'ERROR'}
+  if(true) {
+    responseBody = {status: 'OK'}
+  } 
+  console.log(responseBody)
+  res.send(responseBody)
 });
 
 /* GET name page. */
