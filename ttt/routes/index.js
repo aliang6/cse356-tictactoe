@@ -118,7 +118,7 @@ router.post('/listgames', async(req, res) => {
   res.send(responseBody);
 });
 
-router.post('/getgame', function(req, res){
+router.post('/getgame', async(req, res) => {
   let gameID = req.body.id;
   let game = await GameController.getGame(gameID);
   let responseBody = {status: 'ERROR'}
@@ -132,7 +132,7 @@ router.post('/getgame', function(req, res){
   res.send(responseBody)
 });
 
-router.post('/getscore', function(req, res){
+router.post('/getscore', async(req, res) => {
   let uid = 0; // cookie = user._id
   let games = await GameController.getGameIDs(uid);
   let responseBody = {status: 'ERROR'}
