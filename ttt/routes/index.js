@@ -55,6 +55,10 @@ router.post('/adduser', function(req, res) {
   var username = req.body.username;
   var pass = req.body.password;
   var email = req.body.email;
+  if (UserController.addUser(username,pass,email))
+    console.log("added");
+  else
+    console.log("failed");
   res.send(query);
 });
 

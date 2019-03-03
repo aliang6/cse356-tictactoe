@@ -5,6 +5,7 @@ module.exports.getUsers = function(){
     return query.exec(function(err,users){
         if (err)
             return null;
+        console.log(users);
         return users;
     });
 }
