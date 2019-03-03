@@ -1,13 +1,30 @@
-// imports
-var express = require('express');
+// express
+const express = require('express');
 
-var gbModule = require('../game/GameBoard');
-var gbnModule = require('../game/GameBoardNode');
-var gtModule = require('../game/GameTree');
+// gametree
+const gbModule = require('../game/GameBoard');
+const gbnModule = require('../game/GameBoardNode');
+const gtModule = require('../game/GameTree');
 
-var MongoClient = require('mongodb').MongoClient;
+// mongoose
+const mongoose = require('mongoose');
+var mongodb = 'mongodb://localhost/ttt';
+var collection_users = 'users';
+var collection_games = 'games';
+mongoose.connect(mongodb, { useNewUrlParser: true });
+mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+//Bind connection to error event (to get notification of connection errors)
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-var getCurrentDate = require('../utils/date').getCurrentDate;
+// mongoose models
+// const User = require('../models/User');
+// const Game = require('../models/Game');
+const UserController = require('../controllers/userController');
+const GameController = require('../controllers/gameController');
+
+// utils
+const getCurrentDate = require('../utils/date').getCurrentDate;
 
 // variables
 var router = express.Router();
@@ -16,23 +33,8 @@ var playerName = "-1";
 var winner = "";
 var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
-/* GameTree */
 var tree = new gtModule.GameTree();
 tree.buildTree(gtModule.PLAYERS_TURN);
-
-/* MongoClient */
-var db_url = 'mongodb://localhost/ttt';
-var collection_users = 'users';
-var collection_games = 'games';
-
-MongoClient.connect(db_url, function(err, db){
-  if (err){
-    console.log("Error connecting to MongoDB");
-    return;
-  }
-  console.log("MongoDB connection established.");
-  
-});
 
 
 /* GET default page. */
@@ -41,18 +43,17 @@ router.get('/', function(req, res, next) {
 });
 
 /* Account Creation */
+router.post('/finduser', function(req, res){
+  res.send(UserController.findUser(req.body.username));
+});
+
 router.post('/adduser', function(req, res) {
   var existing = false;
   var query = "";
   var username = req.body.username;
   var pass = req.body.password;
   var email = req.body.email;
-  MongoClient.connect(db_url, function(err, db){
-    query = db.users.find({"username":username}).limit(1);
-    console.log(query);
-  });
   res.send(query);
-  res.render('index', { title: 'adduser' });
 });
 
 router.post('/verify', function(req, res){
