@@ -43,10 +43,10 @@ router.get('/', function(req, res, next) {
 });
 
 /* Account Creation */
-router.post('/finduser', function(req, res){
-  var user = UserController.findUser(req.body.username);
-  console.log(user);
-  res.send(user);
+router.get('/users', function(req, res){
+  var users = UserController.getUsers();
+  console.log(users);
+  res.send(users);
 });
 
 router.post('/adduser', function(req, res) {

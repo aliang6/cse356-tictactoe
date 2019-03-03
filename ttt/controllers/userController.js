@@ -1,5 +1,14 @@
 const User = require('../models/User');
 
+module.exports.getUsers = function(){
+    var query = User.find({});
+    return query.exec(function(err,users){
+        if (err)
+            return null;
+        return users;
+    });
+}
+
 module.exports.findUser = function(username){
     var query = User.find({ 'username' : username }).limit(1);
     return query.exec(function(err, user){
