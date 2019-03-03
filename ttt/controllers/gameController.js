@@ -1,11 +1,10 @@
 const User = require('../models/User');
 const Game = require('../models/Game');
+const UserController = require('userController');
 
 async function getGames(uid){
-    var users = await User.findById(uid);
-    if (users.length == 0)
-        return null;
-    return user[0].games;
+    var user = UserController.findUserById(uid);
+    return (user == null) ? null : user.games;
 };
 
 module.exports.getGames = getGames;

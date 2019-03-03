@@ -58,15 +58,18 @@ router.get('/users', async(req, res) => {
 });
 
 router.post('/adduser', async(req, res) => {
+  let responseBody = { };
+  responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let username = req.body.username;
   let pass = req.body.password;
   let email = req.body.email;
+  if (username == undefined || pass == undefined || email == undefined){
+    res.send(responseBody);
+    return;
+  }
   let success = await UserController.addUser(username,pass,email);
-  let responseBody = { };
   if (success)
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
-  else
-    responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   res.send(responseBody);
 });
 
@@ -85,51 +88,65 @@ router.get('/verify', function(req, res){
 });
 
 router.post('/verify', async(req, res) => {
+  let responseBody = { };
+  responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let email = req.body.email;
   let key = req.body.key;
+  if (email == undefined || key == undefined){
+    res.send(responseBody);
+    return;
+  }
   let success = await UserController.verifyUser(email, key);
-  let responseBody = { };
   if (success)
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
-  else
-    responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   res.send(responseBody);
 });
 
 /* Logging In/Out */
 router.post('/login', async(req, res) => {
+  let responseBody = { };
+  responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let username = req.body.username;
   let password = req.body.password;
+  if (username == undefined || password == undefined){
+    res.send(responseBody);
+    return;
+  }
   let userid = await UserController.authUser(username,password);
   let responseBody = { };
   if (userid != null)
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
-  else
-    responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   res.cookie(jsonConstants.UID_COOKIE, userid);
   res.send(responseBody);
 });
 
 router.post('/logout', function(req, res){
-  console.log(req.cookies);
-  console.log(req.cookies.uid);
   let responseBody = { };
-  let success = true;
-  if (success)
+  responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
+  let uid = req.cookies.uid;
+  if (uid == undefined){
+    res.send(responseBody);
+    return;
+  }
+  let user = await UserController.findUserById(uid);
+  if (user != null){
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
-  else
-    responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
-  res.clearCookie(jsonConstants.UID_COOKIE);
+    res.clearCookie(jsonConstants.UID_COOKIE);
+  }
   res.send(responseBody);
 });
 
 /* Viewing Games */
 router.post('/listgames', async(req, res) => {
-  let uid = req.cookies.uid;
-  let games = await GameController.getGameIDs(uid);
   let responseBody = {};
+  responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
+  let uid = req.cookies.uid;
+  if (uid == undefined){
+    res.send(responseBody);
+    return;
+  }
+  let games = await GameController.getGameIDs(uid);
   if (games == null){
-    responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
     res.send(responseBody);
     return;
   }
@@ -139,11 +156,15 @@ router.post('/listgames', async(req, res) => {
 });
 
 router.post('/getgame', async(req, res) => {
-  let gameID = req.body.id;
-  let game = await GameController.getGame(gameID);
   let responseBody = {}
+  responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
+  let gameID = req.body.id;
+  if (gameID == undefined){
+    res.send(responseBody);
+    return;
+  }
+  let game = await GameController.getGame(gameID);
   if (game == null){
-    responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
     res.send(responseBody);
     return;
   }
@@ -154,11 +175,16 @@ router.post('/getgame', async(req, res) => {
 });
 
 router.post('/getscore', async(req, res) => {
-  let uid = 0; // cookie = user._id
+  let responseBody = {};
+  responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
+  let uid = req.cookies.uid;
+  if (uid == undefined){
+    res.send(responseBody);
+    return;
+  }
   let games = await GameController.getGameIDs(uid);
   let responseBody = {}
   if (games == null){
-    responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
     res.send(responseBody);
     return;
   }

@@ -8,9 +8,18 @@ module.exports.getUsers = async() => {
 }
 
 async function findUser(username){
-    var user = await User.find({ 'username' : username }).limit(1);
-    return user;
+    var users = await User.find({ 'username' : username }).limit(1);
+    if (users.length == 0)
+        return null;
+    return users[0];
 };
+
+async function findUserByID(uid){
+    var users = await User.findById(uid).limit(1);
+    if (users.length == 0)
+        return null;
+    return users[0];
+}
 
 module.exports.findUser = findUser;
 
