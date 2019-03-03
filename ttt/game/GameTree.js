@@ -8,6 +8,7 @@ var GameBoardNode = gbnModule.GameBoardNode;
 
 const PLAYERS_TURN = Box.X;
 const AI_TURN = Box.O;
+const DRAW_TURN = Box.EMPTY;
 const WIN_INDEX = gbnModule.WIN_INDEX;
 const DRAW_INDEX = gbnModule.DRAW_INDEX;
 const LOSE_INDEX = gbnModule.LOSE_INDEX;
@@ -36,6 +37,19 @@ class GameTree {
      */
     findNode(board){
         if (board == null)
+            return null;
+        var node = (this.dict[board.cacheID] == undefined) ? null : this.dict[board.cacheID];
+        return node;
+    }
+
+    /**
+     * Finds the GameBoardNode corresponding to a board's cache ID.
+     * 
+     * Uses the board's cacheID to search the cache.
+     * @param {GameBoard} board the current board
+     */
+    findNodeByID(cacheID){
+        if (cacheID == null)
             return null;
         var node = (this.dict[board.cacheID] == undefined) ? null : this.dict[board.cacheID];
         return node;
@@ -323,3 +337,4 @@ class GameTree {
 module.exports.GameTree = GameTree;
 module.exports.PLAYERS_TURN = PLAYERS_TURN;
 module.exports.AI_TURN = AI_TURN;
+module.exports.DRAW_TURN = DRAW_TURN;

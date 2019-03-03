@@ -5,6 +5,9 @@ const express = require('express');
 const gbModule = require('../game/GameBoard');
 const gbnModule = require('../game/GameBoardNode');
 const gtModule = require('../game/GameTree');
+const PLAYERS_TURN = gtModule.PLAYERS_TURN;
+const DRAW_TURN = gtModule.DRAW_TURN;
+const AI_TURN = gtModule.AI_TURN;
 
 // mongoose
 const mongoose = require('mongoose');
@@ -47,7 +50,6 @@ router.get('/', function(req, res, next) {
 /* Account Creation */
 router.get('/users', async(req, res) => {
   var users = await UserController.getUsers();
-  console.log(users);
   res.send(users);
 });
 
@@ -56,13 +58,11 @@ router.post('/adduser', async(req, res) => {
   var pass = req.body.password;
   var email = req.body.email;
   var success = await UserController.addUser(username,pass,email);
-  console.log((success) ? "success" : "failed");
   res.send(success);
 });
 
 router.post('/finduser', async(req, res) => {
   var user = await UserController.findUser(req.body.username);
-  console.log(user);
   res.send(user);
 });
 
@@ -75,64 +75,85 @@ router.get('/verify', function(req, res){
   res.render('verify', { title: 'verify'})
 });
 
-router.post('/verify', function(req, res){
-  let key = res.body.key;
-  let responseBody = {status: 'ERROR'}
-  if(key === 'abracadabra'){
-    // Find and enable user
-    let email = res.body.email;
-
-    responseBody = {status: 'OK'}
-  }
-  console.log(responsebody)
+router.post('/verify', async(req, res) => {
+  let email = req.body.email;
+  let key = req.body.key;
+  let responseBody = {status: 'ERROR'};
+  let success = await UserController.verifyUser(email, key);
+  if (success)
+    responseBody = {status: 'OK'};
   res.send(responseBody);
 });
 
 /* Logging In/Out */
-router.post('/login', function(req, res){
-  let verified = true;
+router.post('/login', async(req, res) => {
+  let username = req.body.username;
+  let password = req.body.password;
+  let verified = await UserController.authUser(username,password);
   let responseBody = {status: 'ERROR'}
-  if(verified) {
+  if (verified) {
     responseBody = {status: 'OK'}
-  } 
-  console.log(responseBody)
+  }
   res.send(responseBody)
 });
 
 router.post('/logout', function(req, res){
-  let responseBody = {status: 'ERROR'}
-  if(true) {
-    responseBody = {status: 'OK'}
+  let responseBody = {status: 'ERROR'};
+  if (true) {
+    responseBody = {status: 'OK'};
   } 
-  console.log(responseBody)
-  res.send(responseBody)
+  res.send(responseBody);
 });
 
 /* Viewing Games */
-router.post('/listgames', function(req, res){
-  let responseBody = {status: 'ERROR'}
-  if(true) {
-    responseBody = {status: 'OK'}
-  } 
-  console.log(responseBody)
-  res.send(responseBody)
+router.post('/listgames', async(req, res) => {
+  let uid = 0; // cookie = user._id
+  let games = await GameController.getGameIDs(uid);
+  let responseBody = {status: 'ERROR'};
+  if (games == null){
+    res.send(responseBody);
+    return;
+  }
+  responseBody = {'status': 'OK', 'games': games}; 
+  res.send(responseBody);
 });
 
 router.post('/getgame', function(req, res){
+  let gameID = req.body.id;
+  let game = await GameController.getGame(gameID);
   let responseBody = {status: 'ERROR'}
-  if(true) {
-    responseBody = {status: 'OK'}
-  } 
-  console.log(responseBody)
+  if (game == null){
+    res.send(responseBody);
+    return;
+  }
+  let gameNode = tree.findNodeByID(game.boardState);
+  responseBody = gameNode.toJSON();
+  responseBody['status'] = 'OK';
   res.send(responseBody)
 });
 
 router.post('/getscore', function(req, res){
+  let uid = 0; // cookie = user._id
+  let games = await GameController.getGameIDs(uid);
   let responseBody = {status: 'ERROR'}
-  if(true) {
-    responseBody = {status: 'OK'}
-  } 
-  console.log(responseBody)
+  if (games == null){
+    res.send(responseBody);
+    return;
+  }
+  let human = 0, wopr = 0, tie = 0;
+  for (var i in games){
+    let game = games[i];
+    let gameNode = tree.findNodeByID(game.boardState);
+    if (gameNode.isEnd){
+      if (gameNode.winner == PLAYERS_TURN)
+        human += 1;
+      else if (gameNode.winner == AI_TURN)
+        wopr += 1;
+      else if (gameNode.winner == DRAW_TURN)
+        tie += 1;
+    }
+  }
+  responseBody = {'status': 'OK', 'human': human, 'wopr': wopr, 'tie': tie};
   res.send(responseBody)
 });
 

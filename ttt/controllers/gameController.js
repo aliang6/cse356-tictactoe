@@ -2,14 +2,18 @@ const User = require('../models/User');
 const Game = require('../models/Game');
 
 async function getGames(uid){
-    var user = await User.findById(uid);
-    return user.games;
+    var users = await User.findById(uid);
+    if (users.length == 0)
+        return null;
+    return user[0].games;
 };
 
 module.exports.getGames = getGames;
 
 module.exports.getGameIDs = async(uid) => {
     var games = getGames(uid);
+    if (games == null) 
+        return null;
     var result = [];
     for (var i in games){
         let game = games[i];
@@ -19,6 +23,8 @@ module.exports.getGameIDs = async(uid) => {
 }
 
 module.exports.getGame = async(gameID) => {
-    var game = await Game.find({"gameID": gameID}).limit(1);
-    return game;
+    var games = await Game.find({"gameID": gameID}).limit(1);
+    if (games.length == 0)
+        return null;
+    return games[0];
 };
