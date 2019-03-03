@@ -26,6 +26,7 @@ module.exports.addUser = async(username, password, email) => {
     console.log("trying to save");
     User.create({"username": username, "password": password, "email": email})
         .then(doc => {
+            console.log("hi");
             console.log(doc);
         })
         .catch(err => {
