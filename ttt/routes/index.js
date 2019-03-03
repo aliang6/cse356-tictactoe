@@ -31,7 +31,7 @@ const GameController = require('../controllers/gameController');
 
 // utils
 const getCurrentDate = require('../utils/date').getCurrentDate;
-var jsonConstants = require('../constants/jsonConstants');
+var jsonConstants = require('../utils/jsonConstants');
 
 const sendVerificationEmail = require('../utils/mail').sendVerificationEmail;
 
