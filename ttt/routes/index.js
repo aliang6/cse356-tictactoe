@@ -9,6 +9,8 @@ var MongoClient = require('mongodb').MongoClient;
 
 var getCurrentDate = require('../utils/date').getCurrentDate;
 
+const sendVerificationEmail = require('../utils/mail').sendVerificationEmail;
+
 // variables
 var router = express.Router();
 
@@ -50,8 +52,23 @@ router.post('/adduser', function(req, res) {
   res.render('index', { title: 'adduser' });
 });
 
+router.get('/send', function(req, res){
+  sendVerificationEmail("jondysong@gmail.com", "key");
+  res.render('index', { title: 'sent'})
+});
+
+router.get('/verify', function(req, res){
+  res.render('verify', { title: 'verify'})
+});
+
 router.post('/verify', function(req, res){
-  res.render('index', { title: 'verify'})
+  let key = res.body.key;
+  if(key === 'abracadabra'){
+    // Find and enable user
+    let email = res.body.email;
+
+    res.send
+  }
 });
 
 /* Logging In */
