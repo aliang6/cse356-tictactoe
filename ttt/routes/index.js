@@ -127,7 +127,7 @@ router.post('/logout', async(req, res) => {
     res.send(responseBody);
     return;
   }
-  let user = await UserController.findUserById(uid);
+  let user = await UserController.findUserByID(uid);
   if (user != null){
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
     res.clearCookie(jsonConstants.UID_COOKIE);

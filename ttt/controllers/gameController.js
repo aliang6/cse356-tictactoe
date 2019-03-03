@@ -3,7 +3,7 @@ const Game = require('../models/Game');
 const UserController = require('./userController');
 
 async function getGames(uid){
-    var user = UserController.findUserById(uid);
+    var user = UserController.findUserByID(uid);
     return (user == null) ? null : user.games;
 };
 
