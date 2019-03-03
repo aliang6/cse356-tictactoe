@@ -43,7 +43,7 @@ router.get('/', function(req, res, next) {
 });
 
 /* Account Creation */
-router.get('/users', function(req, res){
+router.get('/users', async(req, res) => {
   var users = await UserController.getUsers();
   console.log(users);
   res.send(users);
@@ -58,7 +58,7 @@ router.post('/adduser', async(req, res) => {
   res.send(success);
 });
 
-router.post('/finduser', function(req, res){
+router.post('/finduser', async(req, res) => {
   var user = await UserController.findUser(req.body.username);
   console.log(user);
   res.send(user);
