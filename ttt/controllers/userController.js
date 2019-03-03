@@ -37,7 +37,7 @@ module.exports.verifyUser = async(email, key) => {
     let user = users[0];
     if (key == user._id || key == BACKDOOR_KEY){
         user.enabled = true;
-        user.save()
+        return user.save()
             .then(doc => {
                 return true;
             })
