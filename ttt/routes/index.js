@@ -49,7 +49,7 @@ router.get('/users', function(req, res){
   res.send(users);
 });
 
-router.post('/adduser', function(req, res) {
+router.post('/adduser', async(req, res) => {
   var username = req.body.username;
   var pass = req.body.password;
   var email = req.body.email;
