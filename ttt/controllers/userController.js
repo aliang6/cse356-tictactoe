@@ -2,13 +2,11 @@ const User = require('../models/User');
 
 module.exports.getUsers = async() => {
     var users = await User.find({});
-    if (!users) return null;
     return users;
 }
 
 async function findUser(username){
     var user = await User.find({ 'username' : username }).limit(1);
-    console.log(user);
     return user;
 };
 
