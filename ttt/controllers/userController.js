@@ -9,13 +9,19 @@ module.exports.getUsers = async() => {
 
 module.exports.findUser = async(username) => {
     var user = await User.find({ 'username' : username }).limit(1);
+    console.log(user);
     return user;
 };
 
 module.exports.addUser = async(username, password, email) => {
-    var newUser = new User({"username": username, "password": password, "email": email});
-    console.log(newUser);
-    var success = await newUser.save();
+    var user = findUser(username);
+    console.log(user);
+    if (user)
+        return false;
+    var user = await User.find({ 'email' : email});
+    if (user)
+        return false;
+    var success = await newUser.save({"username": username, "password": password, "email": email});
     return (!success) ? false : true;
 };
 
