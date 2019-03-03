@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const Game = require('../models/Game');
 
-module.exports.getGames = function getGames(uid){
+module.exports.getGames = async function getGames(uid){
     var query = User.findById(uid);
     var games = null;
     query.exec(function(err,user){
@@ -14,7 +14,7 @@ module.exports.getGames = function getGames(uid){
     return games;
 };
 
-module.exports.getGameIDs = function(uid){
+module.exports.getGameIDs = async(uid) => {
     var games = getGames(uid);
     var result = [];
     for (var i in games){
@@ -24,7 +24,7 @@ module.exports.getGameIDs = function(uid){
     return result;
 }
 
-module.exports.getGame = function(gameID){
+module.exports.getGame = async(gameID) => {
     var query = Game.find({"gameID": gameID});
     return query.exec(function(err,game){
         if (err)
