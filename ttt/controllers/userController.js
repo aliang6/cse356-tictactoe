@@ -24,9 +24,14 @@ module.exports.addUser = async(username, password, email) => {
     if (user)
         return false;
     console.log("trying to save");
-    var success = await User.create({"username": username, "password": password, "email": email});
-    console.log(success);
-    return (!success) ? false : true;
+    User.create({"username": username, "password": password, "email": email})
+        .then(doc => {
+            console.log(doc);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    return true;
 };
 
 module.exports.verifyUser = async(email, key) => {
