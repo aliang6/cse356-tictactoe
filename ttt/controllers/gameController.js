@@ -1,10 +1,12 @@
 const User = require('../models/User');
 const Game = require('../models/Game');
 
-module.exports.getGames = async function getGames(uid){
+async function getGames(uid){
     var user = await User.findById(uid);
     return user.games;
 };
+
+module.exports.getGames = getGames;
 
 module.exports.getGameIDs = async(uid) => {
     var games = getGames(uid);

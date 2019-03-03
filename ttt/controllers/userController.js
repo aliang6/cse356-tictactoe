@@ -7,11 +7,13 @@ module.exports.getUsers = async() => {
     return users;
 }
 
-module.exports.findUser = async function findUser(username){
+async function findUser(username){
     var user = await User.find({ 'username' : username }).limit(1);
     console.log(user);
     return user;
 };
+
+module.exports.findUser = findUser;
 
 module.exports.addUser = async(username, password, email) => {
     var user = findUser(username);
