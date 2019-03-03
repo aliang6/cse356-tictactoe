@@ -61,7 +61,7 @@ router.post('/getscore', function(req, res){
 });
 
 /* GET name page. */
-router.get('/ttt', function(req, res, next) {
+router.get('/ttt', function(req, res) {
   grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
   res.render('index', { title: 'Tic-tac-toe' });
 });
@@ -75,7 +75,7 @@ router.post('/ttt', function(req, res) { // Configure the link then redirect to 
 });
 
 /* POST play page */
-router.post('/ttt/play', function(req, res, next) {
+router.post('/ttt/play', function(req, res) {
   console.log("post request received");
   console.log(req.body);
   grid = req.body.grid;
