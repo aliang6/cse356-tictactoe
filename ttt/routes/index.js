@@ -119,7 +119,7 @@ router.post('/login', async(req, res) => {
   res.send(responseBody);
 });
 
-router.post('/logout', function(req, res){
+router.post('/logout', async(req, res) => {
   let responseBody = { };
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let uid = req.cookies.uid;
