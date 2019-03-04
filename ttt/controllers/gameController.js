@@ -38,22 +38,22 @@ module.exports.getGame = async(gameID) => {
 
 module.exports.createGame = async(uid) => {
     var user = UserController.findUserByID(uid);
-    var games = user.games;
-    var newGame = null;
-    Game.create()
+    var newGame = Game.create()
         .then(g => {
-            newGame = g;
+            return g;
         })
         .catch(e => {
             console.log(e);
+            return null;
         });
     if (newGame != null){
-        games.push(newGame);
+        user.games.push(newGame);
         user.save()
             .then(u => {
                 return true;
             })
             .catch(e => {
+                console.log(e);
                 return false;
             });
     }
