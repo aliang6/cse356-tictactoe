@@ -89,6 +89,10 @@ router.post('/verify', function(req, res){
 });
 
 /* Logging In/Out */
+router.get('/login', function(req, res){
+  res.render('login')
+});
+
 router.post('/login', function(req, res){
   let verified = true;
   let responseBody = {status: 'ERROR'}
