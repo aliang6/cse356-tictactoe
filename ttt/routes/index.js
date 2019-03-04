@@ -217,15 +217,9 @@ router.post('/ttt/play', async(req, res) => {
   if (uid == undefined)
     return res.json(responseBody);
   pos = req.body.move;
-  console.log("hi");
   let gameID = await GameController.getCurrentGameID(uid);
-  console.log("hi1");
   let game = await GameController.getGame(gameID);
-  console.log("hi2");
-  console.log(game);
-  console.log(game.boardState);
   let board = gbModule.GameBoard.fromState(game.boardState);
-  console.log(board);
   if (board == null ){
     return res.json(responseBody);
   }
@@ -233,16 +227,12 @@ router.post('/ttt/play', async(req, res) => {
   if (nextNode == null)
     return res.json(responseBody);
 
-  
-  console.log("hi3");
-
   // Update the game state of the new game.
   await GameController.setGameState(game, nextNode.cacheID);
 
   // If the match has ended, create a new Game for the user.
   if (nextNode.isEnd){
     await GameController.createGame(uid);
-    console.log("hi4");
   }
   return res.json(nextNode.toJSON());
   //res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
