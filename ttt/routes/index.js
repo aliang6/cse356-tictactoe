@@ -227,6 +227,9 @@ router.post('/ttt/play', async(req, res) => {
   if (nextNode == null)
     return res.json(responseBody);
 
+  // Update the game state of the new game.
+  await GameController.setGameState(uid, nextNode.cacheID);
+
   // If the match has ended, create a new Game for the user.
   if (nextNode.isEnd){
     await GameController.createGame(uid);

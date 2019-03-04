@@ -15,7 +15,7 @@ async function getGameIDs(uid){
 module.exports.getGameIDs = getGameIDs;
 
 module.exports.listGameIDs = async(uid) => {
-    var games = getGameIDs(uid);
+    var games = await getGameIDs(uid);
     if (games == null) 
         return null;
     var result = [];
@@ -26,43 +26,50 @@ module.exports.listGameIDs = async(uid) => {
     return result;
 };
 
-module.exports.getCurrentGameID = async(uid) => {
-    var games = getGameIDs(uid);
+async function getCurrentGameID(uid) {
+    var games = await getGameIDs(uid);
     if (games == null)
         return null;
     var currentGameID = games[games.length-1];
     return currentGameID;
-};
+}
 
-module.exports.getGame = async(gameID) => {
+module.exports.getCurrentGameID = getCurrentGameID;
+
+async function getGame(gameID){
     var game = await Game.findById(gameID).limit(1);
     return game;
 };
 
+module.exports.getGame = getGame;
+
 module.exports.createGame = async(uid) => {
     var user = await UserController.findUserByID(uid);
-    console.log("hello");
-    console.log(user);
-    console.log(uid);
     if (user == null)
         return false;
-    console.log("hi");
     var newGame = await Game.create({});
-    console.log(newGame);
-    console.log("hi");
     if (newGame != null){
         user.games.push(newGame);
         user.save()
             .then(u => {
-                console.log("hi2");
                 return true;
             })
             .catch(e => {
-                console.log(e);
-                console.log("hi3");
                 return false;
             });
     }
-    console.log("hi");
     return false;
+}
+
+module.exports.setGameState = async(uid, state) => {
+    let gameID = await getCurrentGameID(uid);
+    let game = await getGame(gameID);
+    game.boardState = state;
+    return game.save()
+        .then(g => {
+            return true;
+        })
+        .catch(e => {
+            return false;
+        });
 }
