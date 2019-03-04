@@ -35,3 +35,11 @@ module.exports.getGame = async(gameID) => {
         return null;
     return games[0];
 };
+
+module.exports.createGame = async(uid) => {
+    var user = UserController.findUserByID(uid);
+    var games = user.games;
+    var newGame = await Game.create();
+    games.push(newGame);
+    await user.save();
+}

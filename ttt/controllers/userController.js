@@ -48,13 +48,13 @@ module.exports.verifyUser = async(email, key) => {
         user.enabled = true;
         return user.save()
             .then(doc => {
-                return true;
+                return user;
             })
             .catch(err => {
-                return false;
+                return null;
             });
     }
-    return false;
+    return null;
 };
 
 module.exports.authUser = async(username, password) => {

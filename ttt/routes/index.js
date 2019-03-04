@@ -92,10 +92,11 @@ router.post('/verify', async(req, res) => {
   let key = req.body.key;
   if (email == undefined || key == undefined)
     return res.json(responseBody);
-  let success = await UserController.verifyUser(email, key);
-  if (success){
+  let user = await UserController.verifyUser(email, key);
+  if (user != null){
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
-    // create a new gameID for the user
+    // create a new Game for the user
+    GameController.createGame(uid);
   }
   return res.json(responseBody);
 });
@@ -219,6 +220,11 @@ router.post('/ttt/play', function(req, res) {
   let nextNode = tree.AIPlayGame(board, pos);
   if (nextNode == null)
     return res.json(responseBody);
+
+  // If the match has ended, create a new Game for the user.
+  if (nextNode.isEnd){
+    GameController.createGame(uid);
+  }
   return res.json(nextNode.toJSON());
   //res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
   
