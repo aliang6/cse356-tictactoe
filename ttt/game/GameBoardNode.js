@@ -272,9 +272,9 @@ class GameBoardNode {
                         val = ' ';
                         break;
                 }
+                dict[WINNER_JSON_KEY] = val;
             }
         }
-        dict[WINNER_JSON_KEY] = val;
         return dict;
     }
 }
