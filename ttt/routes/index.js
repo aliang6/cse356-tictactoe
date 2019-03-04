@@ -230,12 +230,16 @@ router.post('/ttt/play', async(req, res) => {
   if (nextNode == null)
     return res.json(responseBody);
 
+  
+  console.log("hi3");
+
   // Update the game state of the new game.
   await GameController.setGameState(game, nextNode.cacheID);
 
   // If the match has ended, create a new Game for the user.
   if (nextNode.isEnd){
     await GameController.createGame(uid);
+    console.log("hi4");
   }
   return res.json(nextNode.toJSON());
   //res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
