@@ -259,17 +259,19 @@ class GameBoardNode {
     toJSON(){
         var dict = this.board.toJSON();
         var val = '';
-        if (this.winner != null){
-            switch (this.winner){
-                case Box.X:
-                    val = 'X';
-                    break;
-                case Box.O:
-                    val = 'O';
-                    break;
-                case Box.EMPTY:
-                    val = ' ';
-                    break;
+        if (this.isEnd){
+            if (this.winner != null){
+                switch (this.winner){
+                    case Box.X:
+                        val = 'X';
+                        break;
+                    case Box.O:
+                        val = 'O';
+                        break;
+                    case Box.EMPTY:
+                        val = ' ';
+                        break;
+                }
             }
         }
         dict[WINNER_JSON_KEY] = val;
