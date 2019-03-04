@@ -99,10 +99,7 @@ router.post('/verify', async(req, res) => {
     return res.json(responseBody);
   let uid = await UserController.verifyUser(email, key);
   if (uid != null){
-    console.log(uid);
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
-    // create a new Game for the user
-    await GameController.createGame(uid);
   }
   return res.json(responseBody);
 });
@@ -218,6 +215,11 @@ router.post('/ttt/play', async(req, res) => {
     return res.json(responseBody);
   pos = req.body.move;
   let gameID = await GameController.getCurrentGameID(uid);
+  if (gameID == null){
+    // create the user's first Game
+    await GameController.createGame(uid);
+    gameID = await GameController.getCurrentGameID(uid);
+  }
   let game = await GameController.getGame(gameID);
   let board = gbModule.GameBoard.fromState(game.boardState);
   if (board == null ){

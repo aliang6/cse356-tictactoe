@@ -40,7 +40,7 @@ module.exports.listGameIDs = async(uid) => {
 
 async function getCurrentGameID(uid) {
     var games = await getGameIDs(uid);
-    if (games == null)
+    if (games == null || games.length == 0)
         return null;
     var currentGameID = games[games.length-1];
     return currentGameID;
