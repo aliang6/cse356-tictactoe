@@ -109,6 +109,18 @@ class GameBoard {
         return board;
     }
 
+    static fromState(boardState){
+        if (typeof boardState !== "string" || boardState.length != BOARD_SIZE)
+            return null;
+        console.log(boardState);
+        var board = new GameBoard();
+        for (var i = 0; i < BOARD_SIZE; i++){
+            let char = boardState.charAt(i);
+            board.setMove(i, char);
+        }
+        return board;
+    }
+
 }
 
 GameBoard.prototype.toString = function GameBoardToString(){

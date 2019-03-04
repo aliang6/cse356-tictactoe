@@ -51,7 +51,7 @@ class GameTree {
     findNodeByID(cacheID){
         if (cacheID == null)
             return null;
-        var node = (this.dict[board.cacheID] == undefined) ? null : this.dict[board.cacheID];
+        var node = (this.dict[cacheID] == undefined) ? null : this.dict[cacheID];
         return node;
     }
     
@@ -332,7 +332,6 @@ class GameTree {
     }
 
 }
-
 
 module.exports.GameTree = GameTree;
 module.exports.PLAYERS_TURN = PLAYERS_TURN;

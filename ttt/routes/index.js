@@ -172,12 +172,12 @@ router.post('/getscore', async(req, res) => {
   let uid = req.cookies.uid;
   if (uid == undefined)
     return res.json(responseBody);
-  let games = await GameController.listGameIDs(uid);
-  if (games == null)
+  let gameIDs = await GameController.listGameIDs(uid);
+  if (gameIDs == null)
     return res.json(responseBody);
   let human = 0, wopr = 0, tie = 0;
-  for (var i in games){
-    let game = games[i];
+  for (var i = 0; i < gameIDs.length; i++){
+    let gameID = gameIDs[i];
     let gameNode = tree.findNodeByID(game.boardState);
     if (gameNode.isEnd){
       if (gameNode.winner == PLAYERS_TURN)
@@ -217,15 +217,18 @@ router.post('/ttt/play', async(req, res) => {
   if (uid == undefined)
     return res.json(responseBody);
   pos = req.body.move;
-  let gameID = GameController.getCurrentGameID(uid);
-  let game = GameController.getGame(gameID);
-  let board = gbModule.GameBoard.fromJSON(game.boardState);
+  let gameID = await GameController.getCurrentGameID(uid);
+  let game = await GameController.getGame(gameID);
+  let board = gbModule.GameBoard.fromState(game.boardState);
   if (board == null ){
     return res.json(responseBody);
   }
   let nextNode = tree.AIPlayGame(board, pos);
   if (nextNode == null)
     return res.json(responseBody);
+
+  // Update the game state of the new game.
+  await GameController.setGameState(game, nextNode.cacheID);
 
   // If the match has ended, create a new Game for the user.
   if (nextNode.isEnd){
