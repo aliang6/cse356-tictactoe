@@ -2,6 +2,11 @@ const User = require('../models/User');
 const Game = require('../models/Game');
 const UserController = require('./userController');
 
+module.exports.getGames = async() => {
+    var games = await Game.find({});
+    return games;
+}
+
 async function getGameIDs(uid){
     var user = UserController.findUserByID(uid);
     return (user == null) ? null : user.games;
@@ -40,14 +45,15 @@ module.exports.createGame = async(uid) => {
     var user = await UserController.findUserByID(uid);
     if (user == null)
         return false;
-    var newGame = Game.create()
+    var newGame = null;
+    Game.create()
         .then(g => {
-            return g;
+            newGame = g;
         })
         .catch(e => {
             console.log(e);
-            return null;
         });
+    console.log(newGame);
     if (newGame != null){
         user.games.push(newGame);
         user.save()

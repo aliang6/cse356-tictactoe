@@ -57,6 +57,11 @@ router.get('/users', async(req, res) => {
   res.send(users);
 });
 
+router.get('/games', async(req, res) => {
+  var games = await GameController.getGames();
+  res.send(games);
+});
+
 router.post('/adduser', async(req, res) => {
   let responseBody = { };
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
