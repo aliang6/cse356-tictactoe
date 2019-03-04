@@ -99,9 +99,10 @@ router.post('/verify', async(req, res) => {
     return res.json(responseBody);
   let uid = await UserController.verifyUser(email, key);
   if (uid != null){
+    console.log(uid);
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
     // create a new Game for the user
-    GameController.createGame(uid);
+    await GameController.createGame(uid);
   }
   return res.json(responseBody);
 });
@@ -228,7 +229,7 @@ router.post('/ttt/play', function(req, res) {
 
   // If the match has ended, create a new Game for the user.
   if (nextNode.isEnd){
-    GameController.createGame(uid);
+    await GameController.createGame(uid);
   }
   return res.json(nextNode.toJSON());
   //res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
