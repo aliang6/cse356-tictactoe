@@ -1,4 +1,4 @@
-function getCurrentDate(){
+module.exports.getCurrentDate = function(){
     // https://stackoverflow.com/questions/1531093/how-do-i-get-the-current-date-in-javascript
     var today = new Date();
     var dd = today.getDate();
@@ -16,5 +16,3 @@ function getCurrentDate(){
     today = mm + '/' + dd + '/' + yyyy;
     return today;
 }
-
-module.exports.getCurrentDate = getCurrentDate;
