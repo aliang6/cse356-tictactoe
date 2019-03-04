@@ -92,8 +92,8 @@ router.post('/verify', async(req, res) => {
   let key = req.body.key;
   if (email == undefined || key == undefined)
     return res.json(responseBody);
-  let user = await UserController.verifyUser(email, key);
-  if (user != null){
+  let uid = await UserController.verifyUser(email, key);
+  if (uid != null){
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
     // create a new Game for the user
     GameController.createGame(uid);

@@ -48,7 +48,7 @@ module.exports.verifyUser = async(email, key) => {
         user.enabled = true;
         return user.save()
             .then(doc => {
-                return user;
+                return user._id;
             })
             .catch(err => {
                 return null;
