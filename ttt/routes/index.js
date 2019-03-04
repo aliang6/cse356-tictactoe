@@ -218,10 +218,11 @@ router.post('/ttt/play', async(req, res) => {
     return res.json(responseBody);
   pos = req.body.move;
   console.log("hi");
-  let gameID = GameController.getCurrentGameID(uid);
+  let gameID = await GameController.getCurrentGameID(uid);
   console.log("hi1");
-  let game = GameController.getGame(gameID);
+  let game = await GameController.getGame(gameID);
   console.log("hi2");
+  console.log(game);
   let board = gbModule.GameBoard.fromJSON(game.boardState);
   if (board == null ){
     return res.json(responseBody);
