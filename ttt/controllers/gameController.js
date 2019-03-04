@@ -46,7 +46,7 @@ module.exports.createGame = async(uid) => {
     if (user == null)
         return false;
     var newGame = null;
-    Game.create()
+    Game.create({})
         .then(g => {
             newGame = g;
         })
