@@ -115,7 +115,7 @@ class GameBoard {
         var board = new GameBoard();
         for (var i = 0; i < BOARD_SIZE; i++){
             let char = boardState.charAt(i);
-            var val = (char == ' ') ? Box.EMPTY : ((char == 'X') ? Box.X : Box.O);
+            var val = (char === ' ') ? Box.EMPTY : ((char === 'X') ? Box.X : Box.O);
             board.setMove(i, val);
         }
         return board;
