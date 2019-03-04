@@ -16,7 +16,7 @@ async function findUser(username){
 };
 
 module.exports.findUserByID = async(uid) => {
-    var user = await User.findById(mongoose.Schema.Types.ObjectId(uid)).limit(1);
+    var user = await User.findById(uid).limit(1);
     return user;
 }
 
