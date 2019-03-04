@@ -43,6 +43,9 @@ module.exports.getGame = async(gameID) => {
 
 module.exports.createGame = async(uid) => {
     var user = await UserController.findUserByID(uid);
+    console.log("hello");
+    console.log(user);
+    console.log(uid);
     if (user == null)
         return false;
     var newGame = null;
