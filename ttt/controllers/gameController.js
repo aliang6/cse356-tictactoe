@@ -46,24 +46,31 @@ module.exports.createGame = async(uid) => {
     if (user == null)
         return false;
     var newGame = null;
+    console.log("hi");
     Game.create({})
         .then(g => {
             newGame = g;
+            console.log("hi4");
         })
         .catch(e => {
             console.log(e);
+            console.log("hi5");
         });
     console.log(newGame);
+    console.log("hi");
     if (newGame != null){
         user.games.push(newGame);
         user.save()
             .then(u => {
+                console.log("hi2");
                 return true;
             })
             .catch(e => {
                 console.log(e);
+                console.log("hi3");
                 return false;
             });
     }
+    console.log("hi");
     return false;
 }
