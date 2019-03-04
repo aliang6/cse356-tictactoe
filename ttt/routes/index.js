@@ -223,7 +223,9 @@ router.post('/ttt/play', async(req, res) => {
   let game = await GameController.getGame(gameID);
   console.log("hi2");
   console.log(game);
-  let board = gbModule.GameBoard.fromJSON(game.boardState);
+  console.log(game.boardState);
+  let board = gbModule.GameBoard.fromState(game.boardState);
+  console.log(board);
   if (board == null ){
     return res.json(responseBody);
   }
