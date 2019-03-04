@@ -14,13 +14,25 @@ async function getGameIDs(uid){
 
 module.exports.getGameIDs = getGameIDs;
 
-module.exports.listGameIDs = async(uid) => {
+async function listGames(uid) {
     var gameIDs = await getGameIDs(uid);
     if (gameIDs == null) 
         return null;
     var result = [];
     for (var i = 0; i < gameIDs.length; i++){
         let game = await getGame(gameIDs[i]);
+        result.push(game);
+    }
+    return result;
+};
+
+module.exports.listGames = listGames;
+
+module.exports.listGameIDs = async(uid) => {
+    var games = listGames(uid);
+    var result = [];
+    for (var i = 0; i < games.length; i++){
+        let game = games[i];
         result.push({"id": game._id, "start_date": game.startDate });
     }
     return result;
