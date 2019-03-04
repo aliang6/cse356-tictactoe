@@ -172,12 +172,12 @@ router.post('/getscore', async(req, res) => {
   let uid = req.cookies.uid;
   if (uid == undefined)
     return res.json(responseBody);
-  let games = await GameController.listGameIDs(uid);
-  if (games == null)
+  let gameIDs = await GameController.listGameIDs(uid);
+  if (gameIDs == null)
     return res.json(responseBody);
   let human = 0, wopr = 0, tie = 0;
-  for (var i in games){
-    let game = games[i];
+  for (var i = 0; i < gameIDs.length; i++){
+    let gameID = gameIDs[i];
     let gameNode = tree.findNodeByID(game.boardState);
     if (gameNode.isEnd){
       if (gameNode.winner == PLAYERS_TURN)
