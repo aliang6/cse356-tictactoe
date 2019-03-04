@@ -210,7 +210,7 @@ router.post('/ttt', function(req, res) { // Configure the link then redirect to 
 });
 
 /* POST play page */
-router.post('/ttt/play', function(req, res) {
+router.post('/ttt/play', async(req, res) => {
   let responseBody = {};
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let uid = req.cookies.uid;
