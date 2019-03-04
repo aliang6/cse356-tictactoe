@@ -61,9 +61,7 @@ module.exports.createGame = async(uid) => {
     return false;
 }
 
-module.exports.setGameState = async(uid, state) => {
-    let gameID = await getCurrentGameID(uid);
-    let game = await getGame(gameID);
+module.exports.setGameState = async(game, state) => {
     game.boardState = state;
     return game.save()
         .then(g => {

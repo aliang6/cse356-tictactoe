@@ -217,8 +217,11 @@ router.post('/ttt/play', async(req, res) => {
   if (uid == undefined)
     return res.json(responseBody);
   pos = req.body.move;
+  console.log("hi");
   let gameID = GameController.getCurrentGameID(uid);
+  console.log("hi1");
   let game = GameController.getGame(gameID);
+  console.log("hi2");
   let board = gbModule.GameBoard.fromJSON(game.boardState);
   if (board == null ){
     return res.json(responseBody);
@@ -228,7 +231,7 @@ router.post('/ttt/play', async(req, res) => {
     return res.json(responseBody);
 
   // Update the game state of the new game.
-  await GameController.setGameState(uid, nextNode.cacheID);
+  await GameController.setGameState(game, nextNode.cacheID);
 
   // If the match has ended, create a new Game for the user.
   if (nextNode.isEnd){
