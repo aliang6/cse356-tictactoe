@@ -176,7 +176,7 @@ router.post('/getscore', async(req, res) => {
   if (games == null)
     return res.json(responseBody);
   let human = 0, wopr = 0, tie = 0;
-  for (var i = 0; i < gameIDs.length; i++){
+  for (var i = 0; i < games.length; i++){
     let game = games[i];
     let gameNode = tree.findNodeByID(game.boardState);
     if (gameNode.isEnd){
