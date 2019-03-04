@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   password: {type: String, required: true},
   email: {type: String, required: true},
   enabled: {type: Boolean, default: false},
-  games: [Number]
+  games: [mongoose.Schema.Types.ObjectId]
 });
 
 module.exports = mongoose.model('User', userSchema);

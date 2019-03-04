@@ -63,19 +63,17 @@ router.post('/adduser', async(req, res) => {
   let username = req.body.username;
   let pass = req.body.password;
   let email = req.body.email;
-  if (username == undefined || pass == undefined || email == undefined){
-    res.send(responseBody);
-    return;
-  }
+  if (username == undefined || pass == undefined || email == undefined)
+    return res.json(responseBody);
   let success = await UserController.addUser(username,pass,email);
   if (success)
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
-  res.send(responseBody);
+  return res.json(responseBody);
 });
 
 router.post('/finduser', async(req, res) => {
   var user = await UserController.findUser(req.body.username);
-  res.send(user);
+  return res.json(user);
 });
 
 router.get('/send', function(req, res){
@@ -92,14 +90,14 @@ router.post('/verify', async(req, res) => {
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let email = req.body.email;
   let key = req.body.key;
-  if (email == undefined || key == undefined){
-    res.send(responseBody);
-    return;
-  }
+  if (email == undefined || key == undefined)
+    return res.json(responseBody);
   let success = await UserController.verifyUser(email, key);
-  if (success)
+  if (success){
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
-  res.send(responseBody);
+    // create a new gameID for the user
+  }
+  return res.json(responseBody);
 });
 
 /* Logging In/Out */
@@ -108,31 +106,27 @@ router.post('/login', async(req, res) => {
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let username = req.body.username;
   let password = req.body.password;
-  if (username == undefined || password == undefined){
-    res.send(responseBody);
-    return;
-  }
+  if (username == undefined || password == undefined)
+    return res.json(responseBody);
   let userid = await UserController.authUser(username,password);
   if (userid != null)
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
   res.cookie(jsonConstants.UID_COOKIE, userid);
-  res.send(responseBody);
+  return res.json(responseBody);
 });
 
 router.post('/logout', async(req, res) => {
   let responseBody = { };
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let uid = req.cookies.uid;
-  if (uid == undefined){
-    res.send(responseBody);
-    return;
-  }
+  if (uid == undefined)
+    return res.json(responseBody);
   let user = await UserController.findUserByID(uid);
   if (user != null){
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
     res.clearCookie(jsonConstants.UID_COOKIE);
   }
-  res.send(responseBody);
+  return res.json(responseBody);
 });
 
 /* Viewing Games */
@@ -140,52 +134,40 @@ router.post('/listgames', async(req, res) => {
   let responseBody = {};
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let uid = req.cookies.uid;
-  if (uid == undefined){
-    res.send(responseBody);
-    return;
-  }
-  let games = await GameController.getGameIDs(uid);
-  if (games == null){
-    res.send(responseBody);
-    return;
-  }
+  if (uid == undefined)
+    return res.json(responseBody);
+  let games = await GameController.listGameIDs(uid);
+  if (games == null)
+    return res.json(responseBody);
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
   responseBody[jsonConstants.GAMES_KEY] = games;
-  res.send(responseBody);
+  return res.json(responseBody);
 });
 
 router.post('/getgame', async(req, res) => {
   let responseBody = {}
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let gameID = req.body.id;
-  if (gameID == undefined){
-    res.send(responseBody);
-    return;
-  }
+  if (gameID == undefined)
+    return res.json(responseBody);
   let game = await GameController.getGame(gameID);
-  if (game == null){
-    res.send(responseBody);
-    return;
-  }
+  if (game == null)
+    return res.json(responseBody);
   let gameNode = tree.findNodeByID(game.boardState);
   responseBody = gameNode.toJSON();
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
-  res.send(responseBody)
+  return res.json(responseBody)
 });
 
 router.post('/getscore', async(req, res) => {
   let responseBody = {};
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let uid = req.cookies.uid;
-  if (uid == undefined){
-    res.send(responseBody);
-    return;
-  }
-  let games = await GameController.getGameIDs(uid);
-  if (games == null){
-    res.send(responseBody);
-    return;
-  }
+  if (uid == undefined)
+    return res.json(responseBody);
+  let games = await GameController.listGameIDs(uid);
+  if (games == null)
+    return res.json(responseBody);
   let human = 0, wopr = 0, tie = 0;
   for (var i in games){
     let game = games[i];
@@ -203,7 +185,7 @@ router.post('/getscore', async(req, res) => {
   responseBody[jsonConstants.SCORE_PLAYER_KEY] = human;
   responseBody[jsonConstants.SCORE_AI_KEY] = wopr;
   responseBody[jsonConstants.SCORE_TIE_KEY] = tie;
-  res.send(responseBody)
+  res.json(responseBody)
 });
 
 /* GET name page. */
@@ -222,19 +204,21 @@ router.post('/ttt', function(req, res) { // Configure the link then redirect to 
 
 /* POST play page */
 router.post('/ttt/play', function(req, res) {
-  console.log("post request received");
-  console.log(req.body);
-  grid = req.body.grid;
-  let board = gbModule.GameBoard.fromJSON(grid);
-  console.log(grid);
-  if (board != null)
-    console.log(board.toString());
+  let responseBody = {};
+  responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
+  let uid = req.cookies.uid;
+  if (uid == undefined)
+    return res.json(responseBody);
+  pos = req.body.move;
+  let gameID = GameController.getCurrentGameID(uid);
+  let game = GameController.getGame(gameID);
+  let board = gbModule.GameBoard.fromJSON(game.boardState);
   if (board == null ){
-    return res.json({"grid": grid, "winner": ""});
+    return res.json(responseBody);
   }
-  let nextNode = tree.AIPlayGame(board);
-  console.log("made move");
-  console.log(nextNode.toJSON());
+  let nextNode = tree.AIPlayGame(board, pos);
+  if (nextNode == null)
+    return res.json(responseBody);
   return res.json(nextNode.toJSON());
   //res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
   
