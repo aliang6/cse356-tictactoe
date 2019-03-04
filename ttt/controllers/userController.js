@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
 const BACKDOOR_KEY = 'abracadabra';
 
@@ -15,7 +16,7 @@ async function findUser(username){
 };
 
 module.exports.findUserByID = async(uid) => {
-    var users = await User.findById(uid).limit(1);
+    var users = await User.findById(mongoose.Schema.Types.ObjectId(uid)).limit(1);
     if (users.length == 0)
         return null;
     return users[0];

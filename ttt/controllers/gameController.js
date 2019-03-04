@@ -8,7 +8,7 @@ module.exports.getGames = async() => {
 }
 
 async function getGameIDs(uid){
-    var user = UserController.findUserByID(uid);
+    var user = await UserController.findUserByID(uid);
     return (user == null) ? null : user.games;
 };
 
