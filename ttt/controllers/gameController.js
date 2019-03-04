@@ -35,10 +35,8 @@ module.exports.getCurrentGameID = async(uid) => {
 };
 
 module.exports.getGame = async(gameID) => {
-    var games = await Game.findById(gameID).limit(1);
-    if (games.length == 0)
-        return null;
-    return games[0];
+    var game = await Game.findById(gameID).limit(1);
+    return game;
 };
 
 module.exports.createGame = async(uid) => {

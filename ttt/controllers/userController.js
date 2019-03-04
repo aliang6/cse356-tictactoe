@@ -16,10 +16,8 @@ async function findUser(username){
 };
 
 module.exports.findUserByID = async(uid) => {
-    var users = await User.findById(mongoose.Schema.Types.ObjectId(uid)).limit(1);
-    if (users.length == 0)
-        return null;
-    return users[0];
+    var user = await User.findById(mongoose.Schema.Types.ObjectId(uid)).limit(1);
+    return user;
 }
 
 module.exports.findUser = findUser;
