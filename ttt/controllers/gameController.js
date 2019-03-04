@@ -29,7 +29,7 @@ async function listGames(uid) {
 module.exports.listGames = listGames;
 
 module.exports.listGameIDs = async(uid) => {
-    var games = listGames(uid);
+    var games = await listGames(uid);
     var result = [];
     for (var i = 0; i < games.length; i++){
         let game = games[i];
