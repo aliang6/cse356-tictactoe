@@ -46,17 +46,8 @@ module.exports.createGame = async(uid) => {
     console.log(uid);
     if (user == null)
         return false;
-    var newGame = null;
     console.log("hi");
-    Game.create({})
-        .then(g => {
-            newGame = g;
-            console.log("hi4");
-        })
-        .catch(e => {
-            console.log(e);
-            console.log("hi5");
-        });
+    var newGame = await Game.create({});
     console.log(newGame);
     console.log("hi");
     if (newGame != null){
