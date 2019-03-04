@@ -37,7 +37,9 @@ module.exports.getGame = async(gameID) => {
 };
 
 module.exports.createGame = async(uid) => {
-    var user = UserController.findUserByID(uid);
+    var user = await UserController.findUserByID(uid);
+    if (user == null)
+        return false;
     var newGame = Game.create()
         .then(g => {
             return g;
@@ -57,5 +59,5 @@ module.exports.createGame = async(uid) => {
                 return false;
             });
     }
-    return;
+    return false;
 }
