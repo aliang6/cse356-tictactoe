@@ -19,7 +19,7 @@ module.exports.listGameIDs = async(uid) => {
     if (gameIDs == null) 
         return null;
     var result = [];
-    for (var i in gameIDs){
+    for (var i = 0; i < gameIDs.length; i++){
         let game = await getGame(gameIDs[i]);
         result.push({"id": game._id, "start_date": game.startDate });
     }
