@@ -118,13 +118,16 @@ router.post('/login', async(req, res) => {
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let username = req.body.username;
   let password = req.body.password;
-  if (username == undefined || password == undefined)
-    return res.json(responseBody);
+  if (username == undefined || password == undefined){
+    res.json(responseBody);
+    return res.redirect('/login')
+  }
   let userid = await UserController.authUser(username,password);
   if (userid != null)
     responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_OK;
   res.cookie(jsonConstants.UID_COOKIE, userid);
-  return res.json(responseBody);
+  res.json(responseBody);
+  return res.redirect('/ttt')
 });
 
 router.post('/logout', async(req, res) => {
@@ -205,12 +208,13 @@ router.post('/getscore', async(req, res) => {
 /* GET name page. */
 router.get('/ttt', function(req, res) {
   grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
-  res.render('index', { title: 'Tic-tac-toe' });
+  //res.render('index', { title: 'Tic-tac-toe' });
+  res.render()
 });
 
 /* POST name page */
-router.post('/ttt', function(req, res) { // Configure the link then redirect to GET /ttt/play
-  playerName = req.body.name;
+router.post('/ttt', function(req, res) { 
+  playerName = req.body.username;
   var x = new Date();
   var date = x.getFullYear() + "-" + x.getMonth() + 1 + "-" + x.getDate();
   res.render('play', { title: 'Tic-tac-toe', name: playerName, date: date, winner: winner, grid: grid});
