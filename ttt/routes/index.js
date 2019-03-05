@@ -138,7 +138,8 @@ router.post('/listgames', async(req, res) => {
   let responseBody = {};
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let uid = req.cookies.uid;
-  if (uid == undefined)
+  let verified = await UserController.isVerified(uid);
+  if (uid == undefined || !verified)
     return res.json(responseBody);
   let games = await GameController.listGameIDs(uid);
   if (games == null)
@@ -167,7 +168,8 @@ router.post('/getscore', async(req, res) => {
   let responseBody = {};
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let uid = req.cookies.uid;
-  if (uid == undefined)
+  let verified = await UserController.isVerified(uid);
+  if (uid == undefined || !verified)
     return res.json(responseBody);
   let games = await GameController.listGames(uid);
   if (games == null)
