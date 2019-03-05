@@ -15,12 +15,22 @@ async function findUser(username){
     return users[0];
 };
 
-module.exports.findUserByID = async(uid) => {
-    var user = await User.findById(uid).limit(1);
-    return user;
-}
+
 
 module.exports.findUser = findUser;
+
+async function findUserByID(uid) {
+    var user = await User.findById(uid).limit(1);
+    return user;
+};
+
+module.exports.findUserByID = findUserByID;
+
+
+module.exports.isVerified = async(uid) => {
+    var user = await findUserByID(uid);
+    return user.enabled;
+};
 
 module.exports.addUser = async(username, password, email) => {
     var users = findUser(username);
@@ -63,9 +73,4 @@ module.exports.authUser = async(username, password) => {
     if (users[0].enabled)
         return users[0]._id;
     return null;
-};
-
-module.exports.isVerified = async(uid) => {
-    var user = await findUserByID(uid);
-    return user.enabled;
 };
