@@ -29,6 +29,8 @@ module.exports.findUserByID = findUserByID;
 
 module.exports.isVerified = async(uid) => {
     var user = await findUserByID(uid);
+    if (user == null)
+        return false;
     return user.enabled;
 };
 
