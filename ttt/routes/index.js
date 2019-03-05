@@ -211,7 +211,8 @@ router.post('/ttt/play', async(req, res) => {
   let responseBody = {};
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
   let uid = req.cookies.uid;
-  if (uid == undefined)
+  let verified = await UserController.isVerified(uid);
+  if (uid == undefined || !verified)
     return res.json(responseBody);
   pos = req.body.move;
   let gameID = await GameController.getCurrentGameID(uid);
@@ -220,7 +221,9 @@ router.post('/ttt/play', async(req, res) => {
     await GameController.createGame(uid);
     gameID = await GameController.getCurrentGameID(uid);
   }
+  console.log(gameID);
   let game = await GameController.getGame(gameID);
+  console.log(game);
   let board = gbModule.GameBoard.fromState(game.boardState);
   if (board == null ){
     return res.json(responseBody);

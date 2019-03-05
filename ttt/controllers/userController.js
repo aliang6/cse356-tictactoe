@@ -64,3 +64,8 @@ module.exports.authUser = async(username, password) => {
         return users[0]._id;
     return null;
 };
+
+module.exports.isVerified = async(uid) => {
+    var user = await findUserByID(uid);
+    return user.enabled;
+};
