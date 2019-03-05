@@ -62,6 +62,10 @@ router.get('/games', async(req, res) => {
   res.send(games);
 });
 
+router.get('/register', function(req, res){
+  res.render('register');
+});
+
 router.post('/adduser', async(req, res) => {
   let responseBody = { };
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
@@ -105,6 +109,10 @@ router.post('/verify', async(req, res) => {
 });
 
 /* Logging In/Out */
+router.get('/login', function(req, res){
+  res.render('login');
+});
+
 router.post('/login', async(req, res) => {
   let responseBody = { };
   responseBody[jsonConstants.STATUS_KEY] = jsonConstants.STATUS_ERR;
