@@ -62,24 +62,14 @@ module.exports.createGame = async(uid) => {
     var newGame = await Game.create({});
     if (newGame != null){
         user.games.push(newGame);
-        user.save()
-            .then(u => {
-                return true;
-            })
-            .catch(e => {
-                return false;
-            });
+        await user.save();
+        return true;
     }
     return false;
 }
 
 module.exports.setGameState = async(game, state) => {
     game.boardState = state;
-    return game.save()
-        .then(g => {
-            return true;
-        })
-        .catch(e => {
-            return false;
-        });
+    await game.save();
+    return true;
 }
